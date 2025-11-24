@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - KAKN Sites</title>
+    <meta name="description" content="Get in touch with KAKN Sites for ICT training inquiries, course enrollment, or collaboration opportunities.">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="images/logo.png">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <img src="images/logo.png" alt="KAKN Sites logo" class="nav-logo">
+                <span>KAKN Sites</span>
+            </div>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="course.html">Course</a></li>
+                <li><a href="research.html">Research</a></li>
+                <li><a href="testimonials.html">Testimonials</a></li>
+                <li><a href="contact.html" class="active">Contact</a></li>
+                <li><a href="login.html" class="btn btn-primary">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="page-header-overlay"></div>
+        <div class="container">
+            <h1>Get in Touch</h1>
+            <p>We're here to help you start your ICT journey</p>
+        </div>
+    </section>
+
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info-section">
+                    <h2>Contact Information</h2>
+                    <p>Reach out to us for course enrollment, training inquiries, or collaboration opportunities. We're committed to responding promptly to all inquiries.</p>
+                    
+                    <div class="contact-methods">
+                        <div class="contact-method">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h3>Email</h3>
+                                <p><a href="mailto:kizitoandrew02@gmail.com">kizitoandrew02@gmail.com</a></p>
+                                <span class="contact-note">Response within 24 hours</span>
+                            </div>
+                        </div>
+
+                        <div class="contact-method">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h3>Phone</h3>
+                                <p><a href="tel:+256771244032">+256 771 244 032</a></p>
+                                <span class="contact-note">Monday - Friday, 9 AM - 6 PM</span>
+                            </div>
+                        </div>
+
+                        <div class="contact-method">
+                            <div class="contact-icon">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h3>WhatsApp</h3>
+                                <p><a href="https://wa.me/256771244032" target="_blank">+256 771 244 032</a></p>
+                                <span class="contact-note">Quick responses & support</span>
+                            </div>
+                        </div>
+
+                        <div class="contact-method">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h3>Training Locations</h3>
+                                <p>Kampala & Luwero</p>
+                                <span class="contact-note">Hybrid learning available</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="office-hours">
+                        <h3>Office Hours</h3>
+                        <ul>
+                            <li><strong>Monday - Friday:</strong> 9:00 AM - 6:00 PM</li>
+                            <li><strong>Saturday:</strong> 10:00 AM - 2:00 PM</li>
+                            <li><strong>Sunday:</strong> Closed</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="contact-form-section">
+                    <h2>Send Us a Message</h2>
+                    <form id="contactForm" class="contact-form">
+                        <div class="form-group">
+                            <label for="name">Full Name <span class="required">*</span></label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Subject <span class="required">*</span></label>
+                            <select id="subject" name="subject" required>
+                                <option value="">-- Select a subject --</option>
+                                <option value="course-enrollment">Course Enrollment</option>
+                                <option value="group-training">Group Training Request</option>
+                                <option value="consultation">Consultation Services</option>
+                                <option value="research-collaboration">Research Collaboration</option>
+                                <option value="general-inquiry">General Inquiry</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Your Message <span class="required">*</span></label>
+                            <textarea id="message" name="message" rows="6" required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+
+                        <div id="formMessage" class="form-message"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="map-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Training Locations</h2>
+                <div class="section-divider"></div>
+                <p>We offer training in Kampala and Luwero, with hybrid options available</p>
+            </div>
+            <div class="location-cards">
+                <div class="location-card">
+                    <div class="location-icon">
+                        <i class="fas fa-city"></i>
+                    </div>
+                    <h3>Kampala</h3>
+                    <p>Urban training center with modern facilities and equipment</p>
+                </div>
+                <div class="location-card">
+                    <div class="location-icon">
+                        <i class="fas fa-school"></i>
+                    </div>
+                    <h3>Luwero</h3>
+                    <p>Community-focused training serving teachers and local professionals</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Frequently Asked Questions</h2>
+                <div class="section-divider"></div>
+            </div>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h3><i class="fas fa-question-circle"></i> How do I enroll in the course?</h3>
+                    <p>You can enroll by contacting us via phone, email, or WhatsApp. We'll guide you through the registration process and payment options.</p>
+                </div>
+                <div class="faq-item">
+                    <h3><i class="fas fa-question-circle"></i> Do you offer group discounts?</h3>
+                    <p>Yes! We offer institutional discounts for groups of 5 or more participants. Contact us for special pricing.</p>
+                </div>
+                <div class="faq-item">
+                    <h3><i class="fas fa-question-circle"></i> What are the payment methods?</h3>
+                    <p>We accept Mobile Money, bank transfers, and PayPal for your convenience.</p>
+                </div>
+                <div class="faq-item">
+                    <h3><i class="fas fa-question-circle"></i> Is the course available online?</h3>
+                    <p>Yes! We offer both online and hybrid learning options to accommodate different schedules and locations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Get Started?</h2>
+            <p>Enroll in our course today and transform your ICT skills</p>
+            <a href="course.html" class="btn btn-primary btn-large">View Course Details</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3><i class="fas fa-graduation-cap"></i> KAKN Sites</h3>
+                    <p>Bridging Teachers and Communities with ICT through practical training and innovative solutions.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="course.html">Course</a></li>
+                        <li><a href="research.html">Research</a></li>
+                        <li><a href="testimonials.html">Testimonials</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Contact</h4>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-envelope"></i> kizitoandrew02@gmail.com</li>
+                        <li><i class="fas fa-phone"></i> +256 771 244 032</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-translate">
+                    <div id="google_translate_element"></div>
+                </div>
+                <p>&copy; 2025 KAKN Sites. All Rights Reserved.</p>
+                <p> Designed by Envisage </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'es,fr,de,it,pt,ru,zh-CN,ja,ko,ar,hi,sw',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+        <!-- Firebase: initialize app and wire contact form to Firestore -->
+        <script type="module">
+            // Firebase SDK (modular) - initialize and use Firestore
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+            import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+            import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+            // Project config (provided)
+            const firebaseConfig = {
+                apiKey: "AIzaSyB5kckado_jqgb1z_oRrLrP90bLvBUZGQs",
+                authDomain: "kakn-sites-7c4e9.firebaseapp.com",
+                databaseURL: "https://kakn-sites-7c4e9-default-rtdb.firebaseio.com",
+                projectId: "kakn-sites-7c4e9",
+                storageBucket: "kakn-sites-7c4e9.firebasestorage.app",
+                messagingSenderId: "628096383132",
+                appId: "1:628096383132:web:26ceb9e11094fe87191559",
+                measurementId: "G-VX7S6Y1YN6"
+            };
+
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            try { const analytics = getAnalytics(app); } catch (e) { /* analytics may be blocked in some contexts */ }
+            const db = getFirestore(app);
+
+            // Wire the contact form to Firestore
+            const form = document.getElementById('contactForm');
+            const formMessage = document.getElementById('formMessage');
+
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    // Basic client-side validation
+                    const name = (form.name && form.name.value) ? form.name.value.trim() : '';
+                    const email = (form.email && form.email.value) ? form.email.value.trim() : '';
+                    const phone = (form.phone && form.phone.value) ? form.phone.value.trim() : '';
+                    const subject = (form.subject && form.subject.value) ? form.subject.value : '';
+                    const message = (form.message && form.message.value) ? form.message.value.trim() : '';
+
+                    if (!name || !email || !subject || !message) {
+                        if (formMessage) {
+                            formMessage.textContent = 'Please complete all required fields.';
+                            formMessage.className = 'form-message error';
+                            formMessage.style.display = '';
+                        }
+                        return;
+                    }
+
+                    // Show sending state
+                    if (formMessage) {
+                        formMessage.textContent = 'Sending...';
+                        formMessage.className = 'form-message info';
+                        formMessage.style.display = '';
+                    }
+
+                    try {
+                        const docRef = await addDoc(collection(db, 'contacts'), {
+                            name,
+                            email,
+                            phone,
+                            subject,
+                            message,
+                            createdAt: serverTimestamp()
+                        });
+
+                        if (formMessage) {
+                            formMessage.textContent = 'Thank you — your message has been received.';
+                            formMessage.className = 'form-message success';
+                        }
+                        form.reset();
+
+                        // Optionally keep the existing localStorage behavior in `js/script.js`
+                        // (it will run in addition to this). If you prefer to avoid duplicate
+                        // storage, we can remove the localStorage handler from `js/script.js`.
+
+                    } catch (err) {
+                        console.error('Failed to save contact to Firestore:', err);
+                        if (formMessage) {
+                            formMessage.textContent = 'Failed to send message — please try again later.';
+                            formMessage.className = 'form-message error';
+                        }
+                    }
+
+                    // hide message after 10s
+                    setTimeout(() => { if (formMessage) formMessage.style.display = 'none'; }, 10000);
+                });
+            }
+        </script>
+</body>
+</html>

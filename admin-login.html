@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - KAKN Sites</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="images/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Google Translate Widget -->
+    <div id="google_translate_element"></div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header admin-header">
+                <i class="fas fa-user-shield"></i>
+                <h1>Admin Portal</h1>
+                <p>Secure Administrative Access</p>
+            </div>
+
+            <form id="adminLoginForm" class="auth-form">
+                <h2>Admin Sign In</h2>
+                
+                <div class="form-group">
+                    <label for="adminEmail">
+                        <i class="fas fa-envelope"></i> Admin Email
+                    </label>
+                    <input type="email" id="adminEmail" required placeholder="Enter admin email">
+                </div>
+
+                <div class="form-group">
+                    <label for="adminPassword">
+                        <i class="fas fa-lock"></i> Admin Password
+                    </label>
+                    <input type="password" id="adminPassword" required placeholder="Enter admin password">
+                </div>
+
+                <div class="admin-note">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Demo Admin: admin@kakn.com / Password: admin123</p>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-shield-alt"></i> Admin Sign In
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <a href="index.html">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'es,fr,de,it,pt,ru,zh-CN,ja,ko,ar,hi,sw',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>
