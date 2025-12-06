@@ -59,7 +59,6 @@
 
                     <div class="form-actions" style="margin-top:6px">
                         <button type="submit" class="btn btn-primary" id="signInBtn" style="flex:1">Sign In</button>
-                        <button type="button" class="btn btn-secondary" id="saveAdminBtn" title="Save these credentials to Firestore admin collection">Save Credentials</button>
                     </div>
                 </form>
                 <div style="margin-top:8px;color:rgba(255,255,255,0.7);font-size:13px">Don't share your admin credentials.</div>
@@ -147,51 +146,7 @@
             });
         }
 
-        // Save credentials to Firestore admin collection (hashed)
-        const saveAdminBtn = document.getElementById('saveAdminBtn');
-        if (saveAdminBtn) {
-            saveAdminBtn.addEventListener('click', async function (e) {
-                e.preventDefault();
-                const username = document.getElementById('adminUsername').value.trim();
-                const password = document.getElementById('adminPassword').value;
-                if (!username || !password) {
-                    alert('Please enter username and password first');
-                    return;
-                }
-
-                if (!window.firebase || !firebase.firestore) {
-                    alert('Firebase not initialized. Credentials cannot be saved.');
-                    return;
-                }
-
-                const db = firebase.firestore();
-                const docId = encodeURIComponent(username.toLowerCase());
-
-                try {
-                    const existing = await db.collection('admin').doc(docId).get();
-                    if (existing.exists) {
-                        const ok = confirm('An admin with this username already exists. Overwrite?');
-                        if (!ok) return;
-                    }
-
-                    const pwdHash = await hashString(password);
-                    const displayName = prompt('Enter display name for this admin (optional)', username) || username;
-
-                    await db.collection('admin').doc(docId).set({
-                        username: username,
-                        usernameLower: username.toLowerCase(),
-                        name: displayName,
-                        passwordHash: pwdHash,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-
-                    alert('Admin credentials saved to Firestore successfully. You can now sign in with these credentials.');
-                } catch (err) {
-                    console.error('Error saving admin credentials', err);
-                    alert('Failed to save credentials. Check console for details.');
-                }
-            });
-        }
+        // Note: Save functionality removed — signing in uses previously saved credentials.
     </script>
     
 </body>
