@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - KAKN Sites Learning Platform</title>
+    <link rel="icon" type="image/x-icon" href="/images/logo.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-box">
+            <div class="image-side">
+                <div class="logo-section">
+                    <img src="/images/logo.png" alt="KAKN Sites logo" class="site-logo large-logo">
+                    <h1>KAKN Sites</h1>
+                    <p>Learning Platform</p>
+                </div>
+            </div>
+            <div class="form-side">
+            <div id="authContainer">
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+                <button type="submit" class="btn-primary btn-block">Login</button>
+                <div class="login-footer">
+                    <p>Don't have an account? <a href="#" id="signupLink">Sign Up</a></p>
+                </div>
+            </form>
+
+            <!-- Signup form (hidden by default) -->
+            <form id="signupForm" class="login-form" style="display:none; margin-top:0;">
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email Address</label>
+                    <input type="email" id="signupEmail" name="signupEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="telephone">Telephone</label>
+                    <input type="tel" id="telephone" name="telephone" placeholder="Enter your telephone number" required>
+                </div>
+                <div class="form-group">
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" id="dob" name="dob" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" name="signupPassword" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                </div>
+
+                <button type="submit" class="btn-primary btn-block">Sign Up</button>
+                <div class="login-footer" style="margin-top:12px;">
+                    <p>Already have an account? <a href="#" id="backToLogin">Back to Login</a></p>
+                </div>
+            </form>
+
+            </div>
+        </div>
+    </div>
+    <!-- Firebase (compat) SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script>
+        // Firebase project configuration (shared)
+        const firebaseConfig = {
+          apiKey: "AIzaSyB5kckado_jqgb1z_oRrLrP90bLvBUZGQs",
+          authDomain: "kakn-sites-7c4e9.firebaseapp.com",
+          databaseURL: "https://kakn-sites-7c4e9-default-rtdb.firebaseio.com",
+          projectId: "kakn-sites-7c4e9",
+          storageBucket: "kakn-sites-7c4e9.firebasestorage.app",
+          messagingSenderId: "628096383132",
+          appId: "1:628096383132:web:26ceb9e11094fe87191559",
+          measurementId: "G-VX7S6Y1YN6"
+        };
+        if (!window.firebase || !firebase.apps || firebase.apps.length === 0) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        // Enrollment contact — populated from site contact details
+        window.ENROLMENT_CONTACT = {
+            name: 'Andrew Kizito',
+            phone: '+256 771 244 032',
+            email: 'kizitoandrew02@gmail.com',
+            details: 'After paying the enrolment fee, notify the admin with your transaction details.'
+        };
+    </script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - KAKN Sites</title>
+    <meta name="description" content="Read the latest blog posts from KAKN Sites — insights on ICT in education, teaching tips, and project highlights.">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="images/logo.png">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <img src="images/logo.png" alt="KAKN Sites logo" class="nav-logo">
+                <span>KAKN Sites</span>
+            </div>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="course.html">Course</a></li>
+                <li><a href="research.html">Research</a></li>
+                <li><a href="blog.html" class="active">Blog</a></li>
+                <li><a href="testimonials.html">Testimonials</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="platform/index.html" class="btn btn-primary">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="page-header-overlay"></div>
+        <div class="container">
+            <h1>Blog</h1>
+            <p>Latest insights, updates and stories from KAKN Sites</p>
+        </div>
+    </section>
+
+    <section class="blog-search" style="padding:40px 20px;">
+        <div class="container">
+            <div style="max-width:900px;margin:0 auto;display:flex;gap:12px;align-items:center;">
+                <input id="blogSearch" type="search" placeholder="Search blog titles..." style="flex:1;padding:12px 16px;border-radius:8px;border:1px solid var(--border-color);font-size:1rem;">
+                <button id="blogSearchBtn" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="blog-listing">
+        <div class="container">
+            <div id="blogList" class="posts-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;">
+                <!-- Blog posts rendered here -->
+            </div>
+        </div>
+    </section>
+
+    <section class="blog-carousel" style="padding:60px 20px;background-color:var(--background-light);">
+        <div class="container">
+            <div class="section-header">
+                <h2>All Blog Posts</h2>
+                <div class="section-divider"></div>
+            </div>
+            <div id="blogCarousel" style="display:flex;gap:16px;overflow:auto;padding:8px 4px;">
+                <!-- Thumbnails for carousel -->
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3><img src="/images/logo.png" alt="KAKN Sites logo" class="site-logo"> KAKN Sites</h3>
+                    <p>Bridging Teachers and Communities with ICT through practical training and innovative solutions.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="course.html">Course</a></li>
+                        <li><a href="research.html">Research</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Contact</h4>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-envelope"></i> kizitoandrew02@gmail.com</li>
+                        <li><i class="fas fa-phone"></i> +256 771 244 032</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 KAKN Sites. All Rights Reserved.</p>
+                <p> Designed by Envisage </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
