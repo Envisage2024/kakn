@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog - KAKN Sites</title>
+    <title>Blog | KAKN Sites</title>
     <meta name="description" content="Read the latest blog posts from KAKN Sites — insights on ICT in education, teaching tips, and project highlights.">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -47,29 +47,37 @@
 
     <section class="blog-search" style="padding:40px 20px;">
         <div class="container">
-            <div style="max-width:900px;margin:0 auto;display:flex;gap:12px;align-items:center;">
-                <input id="blogSearch" type="search" placeholder="Search blog titles..." style="flex:1;padding:12px 16px;border-radius:8px;border:1px solid var(--border-color);font-size:1rem;">
-                <button id="blogSearchBtn" class="btn btn-primary">Search</button>
+            <div class="search-row" style="max-width:900px;margin:0 auto;display:flex;gap:12px;align-items:center;">
+                <input id="blogSearch" type="search" placeholder="Search blog titles..." class="blog-search-input" />
+                <button id="blogSearchBtn" class="btn btn-primary">
+                    <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
+                    <span class="search-text">Search</span>
+                </button>
             </div>
         </div>
     </section>
-
-    <section class="blog-listing">
+    <!-- Latest posts: show title and latest four in 2x2 grid on desktop -->
+    <section class="latest-posts" style="padding:40px 20px;">
         <div class="container">
-            <div id="blogList" class="posts-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;">
-                <!-- Blog posts rendered here -->
+            <div class="section-header">
+                <h2>Latest Blog</h2>
+                <div class="section-divider"></div>
+            </div>
+            <div id="latestGrid" class="latest-grid">
+                <!-- Latest 4 posts rendered here -->
             </div>
         </div>
     </section>
 
-    <section class="blog-carousel" style="padding:60px 20px;background-color:var(--background-light);">
+    <!-- All posts listing: grid with four across on desktop -->
+    <section class="blog-listing" style="padding:40px 20px;">
         <div class="container">
             <div class="section-header">
                 <h2>All Blog Posts</h2>
                 <div class="section-divider"></div>
             </div>
-            <div id="blogCarousel" style="display:flex;gap:16px;overflow:auto;padding:8px 4px;">
-                <!-- Thumbnails for carousel -->
+            <div id="blogList" class="posts-grid">
+                <!-- All blog posts rendered here -->
             </div>
         </div>
     </section>
@@ -89,6 +97,7 @@
                         <li><a href="course.html">Course</a></li>
                         <li><a href="research.html">Research</a></li>
                         <li><a href="blog.html">Blog</a></li>
+                        <li><a href="testimonials.html">Testimonials</a></li>
                         <li><a href="contact.html">Contact</a></li>
                     </ul>
                 </div>
@@ -102,11 +111,49 @@
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2025 KAKN Sites. All Rights Reserved.</p>
-                <p> Designed by Envisage </p>
+                <p> Designed by <a href="https://envisageweb.netlify.app" class="envisage-link" target="_blank" rel="noopener noreferrer">Envisage</a> </p>
             </div>
         </div>
     </footer>
 
+    <!-- Post modal (shows full blog content) -->
+    <div id="postModal" style="display:none;position:fixed;inset:0;z-index:3000;align-items:center;justify-content:center;">
+        <div class="modal-backdrop" style="position:absolute;inset:0;background:rgba(0,0,0,0.5);"></div>
+        <div class="modal-inner" style="position:relative;z-index:3001;max-width:900px;width:95%;max-height:90vh;overflow:auto;background:#fff;border-radius:12px;">
+            <button id="postModalClose" class="modal-close" aria-label="Close post">&times;</button>
+            <div id="postModalContent">
+                <div id="postCover" style="width:100%;height:300px;object-fit:cover;background:#eee"></div>
+                <div style="padding:18px;">
+                    <h2 id="postModalTitle"></h2>
+                    <small id="postModalDate" style="color:var(--text-light)"></small>
+                    <div id="postModalBody" style="margin-top:12px;color:var(--text-dark)"></div>
+                    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px;">
+                        <button id="postModalReadMore" class="btn btn-secondary">Read More</button>
+                        <button id="postModalShare" class="btn btn-primary">Share</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Firebase + blog loader -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyB5kckado_jqgb1z_oRrLrP90bLvBUZGQs",
+          authDomain: "kakn-sites-7c4e9.firebaseapp.com",
+          databaseURL: "https://kakn-sites-7c4e9-default-rtdb.firebaseio.com",
+          projectId: "kakn-sites-7c4e9",
+          storageBucket: "kakn-sites-7c4e9.firebasestorage.app",
+          messagingSenderId: "628096383132",
+          appId: "1:628096383132:web:26ceb9e11094fe87191559",
+          measurementId: "G-VX7S6Y1YN6"
+        };
+        if (!window.firebase || !firebase.apps || firebase.apps.length === 0) {
+            firebase.initializeApp(firebaseConfig);
+        }
+    </script>
+    <script src="js/blog.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
