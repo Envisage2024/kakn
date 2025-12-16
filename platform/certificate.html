@@ -88,11 +88,16 @@
             </header>
 
             <div class="content-area" style="display:flex;align-items:center;justify-content:center;">
-                <div id="studentCertificateArea" class="certificate-message" style="text-align:center;max-width:760px;padding:40px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfbfb);box-shadow:0 6px 18px rgba(0,0,0,0.06);">
-                    <h2 style="margin-top:0"><i class="fas fa-certificate"></i> Get Your Certificate</h2>
-                    <p style="font-size:1.05rem;color:#333;margin:18px 0">Get a certificate of completion from KAKN Sites. Continue learning to unlock your certificate — once issued it will appear here for you to view.</p>
-                    <p style="color:#666;margin-top:12px">Certificates are issued by the admin. If you believe you should have one, check the <a href="notifications.html">Notifications</a> or contact support.</p>
-                    <div id="certificateLinkContainer" style="margin-top:18px"></div>
+                <div id="studentCertificateArea" class="certificate-message" style="position:relative;text-align:center;max-width:760px;padding:40px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfbfb);box-shadow:0 6px 18px rgba(0,0,0,0.06);min-height:220px;">
+                    <div id="certificateSpinner" class="loader" aria-hidden="false" style="display:block;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20;">
+                        <div class="spinner" aria-hidden="true"></div>
+                    </div>
+
+                    <div id="certificateContent" style="display:none;">
+                        <h2 style="margin-top:0"><i class="fas fa-certificate"></i> Get Your Certificate</h2>
+                        <p style="font-size:1.05rem;color:#333;margin:18px 0">Get a certificate of completion from KAKN Sites. Continue learning to unlock your certificate — once issued it will appear here for you to view.</p>
+                        <div id="certificateLinkContainer" style="margin-top:18px"></div>
+                    </div>
                 </div>
             </div>
         </main>

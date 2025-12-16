@@ -181,6 +181,36 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Modal helpers
+// prevent background scroll while modal is open
+function disableBodyScroll() {
+    try {
+        const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+        document.body.setAttribute('data-scroll-y', String(scrollY));
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.left = '0';
+        document.body.style.right = '0';
+        document.body.style.width = '100%';
+    } catch (e) {
+        // fallback: add a simple overflow hidden class
+        document.body.classList.add('no-scroll');
+    }
+}
+
+function enableBodyScroll() {
+    try {
+        const y = parseInt(document.body.getAttribute('data-scroll-y') || '0');
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.width = '';
+        document.body.removeAttribute('data-scroll-y');
+        window.scrollTo(0, y);
+    } catch (e) {
+        document.body.classList.remove('no-scroll');
+    }
+}
 function openPostModal(id) {
     // find post from last fetched list (we can fetch from storage)
     fetchBlogs().then(posts => {
@@ -209,6 +239,9 @@ function openPostModal(id) {
 
         modal.style.display = 'flex';
 
+        // disable background scrolling while modal is open
+        disableBodyScroll();
+
         // update URL hash so it can be shared
         try { history.replaceState(null, '', '#post=' + encodeURIComponent(post.id || post._docId || '')); } catch (e) {}
 
@@ -226,6 +259,8 @@ function closePostModal() {
     const modal = document.getElementById('postModal');
     if (!modal) return;
     modal.style.display = 'none';
+    // re-enable background scrolling when modal closes
+    enableBodyScroll();
     // remove hash without reloading
     try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) {}
 }

@@ -17,9 +17,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function activateTab(filter) {
         tabs.forEach(t => t.classList.toggle('active', t.dataset.filter === filter));
-        // show all cards and they'll carry data-status which we'll use to display
+        // show/hide cards according to filter
         const cards = container.querySelectorAll('.assignment-card');
+        // remove any existing empty-state message for a clean slate
+        const existingEmpty = document.getElementById('assignEmptyState');
+        if (existingEmpty && existingEmpty.parentNode) existingEmpty.parentNode.removeChild(existingEmpty);
         cards.forEach(c => c.style.display = (filter === 'all' || c.dataset.status === filter) ? 'block' : 'none');
+
+        // if no cards are visible for this filter, show centered empty-state message
+        const visibleCards = Array.from(cards).filter(c => c.style.display !== 'none');
+            if (visibleCards.length === 0) {
+                const empty = document.createElement('div');
+                empty.id = 'assignEmptyState';
+                empty.className = 'section-spinner';
+                empty.style.cssText = 'min-height:160px;display:flex;align-items:center;justify-content:center;';
+                empty.innerHTML = "<p class=\"no-data\" style=\"font-size:18px;font-weight:600;color:#111827;text-align:center;margin:0\">All set - There's nothing to show here!</p>";
+                container.appendChild(empty);
+        }
     }
 
     tabs.forEach(t => t.addEventListener('click', () => activateTab(t.dataset.filter)));
@@ -30,6 +44,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const reviewTitle = document.getElementById('reviewTitle');
     const closeReviewBtn = document.getElementById('closeReviewBtn');
     if (closeReviewBtn) closeReviewBtn.addEventListener('click', () => reviewModal.style.display = 'none');
+
+    // Spinner control shown while Firebase initializes and data loads
+    function showSpinner() {
+        if (!container) return;
+        container.innerHTML = `<div id="assignmentsSpinner" class="section-spinner"><div class="spinner"></div></div>`;
+    }
+    function hideSpinner() {
+        const s = document.getElementById('assignmentsSpinner');
+        if (s && s.parentNode) s.parentNode.removeChild(s);
+    }
+
+    // spinner markup is present in HTML so no need to re-insert here
 
     // wait for firebase (if available). If using Firebase Auth, wait for onAuthStateChanged
     waitForFirebase(5000).then(firebaseAvailable => {
@@ -110,7 +136,9 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = '';
 
         if (!assignments.length) {
-            container.innerHTML = '<p class="no-data">No assignments available.</p>';
+            // center the friendly empty-state message where the spinner was
+                container.innerHTML = "<div id=\"assignEmptyState\" class=\"section-spinner\" style=\"min-height:160px;display:flex;align-items:center;justify-content:center;\"><p class=\"no-data\" style=\"font-size:18px;font-weight:600;color:#111827;text-align:center;margin:0\">All set - There's nothing to show here!</p></div>";
+            hideSpinner();
             return;
         }
 
@@ -126,6 +154,20 @@ document.addEventListener('DOMContentLoaded', () => {
             card.dataset.status = status;
             card.dataset.assignmentId = a.id;
             const dueText = a.dueDate ? (new Date(a.dueDate)).toLocaleDateString() : '';
+            // find any completion record for this assignment and normalize completedAt
+            const compRecord = completions.find(c => (c.assignmentId || c.assignmentID || c.id) === a.id) || null;
+            let submittedDisplay = '';
+            if (compRecord && compRecord.completedAt) {
+                try {
+                    let d = compRecord.completedAt;
+                    // Firestore Timestamp has toDate()
+                    if (d && typeof d.toDate === 'function') d = d.toDate();
+                    // strings or numbers convert via Date
+                    d = new Date(d);
+                    if (!isNaN(d)) submittedDisplay = 'Submitted: ' + d.toLocaleDateString();
+                    else submittedDisplay = 'Submitted';
+                } catch (e) { submittedDisplay = 'Submitted'; }
+            }
 
             card.innerHTML = `
                 <div class="assignment-header">
@@ -134,25 +176,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <p class="assignment-description">${escapeHtml(a.instructions || '')}</p>
                 <div class="assignment-footer">
-                    <span class="deadline"><i class="fas fa-calendar"></i> ${ isCompleted ? (completions.find(c=>c.assignmentId===a.id).completedAt ? ('Submitted: ' + new Date(completions.find(c=>c.assignmentId===a.id).completedAt).toLocaleDateString()) : 'Submitted') : (dueText ? ('Due: ' + dueText) : '') }</span>
+                    <span class="deadline"><i class="fas fa-calendar"></i> ${ isCompleted ? (submittedDisplay || 'Submitted') : (dueText ? ('Due: ' + dueText) : '') }</span>
                     <div style="display:flex;gap:8px;">
-                        <button class="btn-primary btn-sm btn-open" data-url="${escapeHtml(a.googleFormUrl||'')}">New</button>
+                        <button class="btn-primary btn-sm btn-open" data-url="${escapeHtml(a.googleFormUrl||'')}">View</button>
                         ${ status === 'pending' ? `<button class="btn-outline btn-sm btn-complete">Mark as completed</button>` : '' }
-                        ${ status === 'completed' ? `<button class="btn-outline btn-sm btn-viewsubmission">View Submission</button>` : '' }
                         ${ status === 'reviewed' ? `<button class="btn-outline btn-sm btn-viewreview">View Feedback</button>` : '' }
                     </div>
                 </div>
             `;
 
+            // store the assignment URL on the card for later use (e.g., when marking completed)
+            try { card.dataset.url = a.googleFormUrl || ''; } catch (e) {}
+
             // append
             container.appendChild(card);
         });
 
-        // attach handlers
-        container.querySelectorAll('.btn-open').forEach(b => b.addEventListener('click', (e) => {
-            const url = b.dataset.url;
+        // attach handlers via event delegation so dynamically-updated buttons always work
+        container.addEventListener('click', function (e) {
+            const btn = e.target.closest('.btn-open');
+            if (!btn) return;
+            const url = btn.dataset.url || (btn.closest('.assignment-card') && btn.closest('.assignment-card').dataset.url) || '';
             if (url) window.open(url, '_blank'); else alert('No URL provided for this assignment.');
-        }));
+        });
+
+        // No separate 'View Submission' button any more; the single 'View' button handles opening the URL.
 
         container.querySelectorAll('.btn-complete').forEach(b => b.addEventListener('click', async (e) => {
             const card = b.closest('.assignment-card');
@@ -167,13 +215,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     arr.push({ id: Date.now().toString(), assignmentId: aid, userId: userId, completedAt: new Date().toISOString() });
                     localStorage.setItem('assignmentCompletions', JSON.stringify(arr));
                 }
-                // move card status to completed
+                // move card status to completed and show submitted date
                 card.dataset.status = 'completed';
                 const badge = card.querySelector('.status-badge'); if (badge) { badge.className='status-badge completed'; badge.textContent='Completed'; }
-                // update footer
-                const deadline = card.querySelector('.deadline'); if (deadline) deadline.innerHTML = '<i class="fas fa-check"></i> Submitted';
-                // replace buttons
-                const footer = card.querySelector('.assignment-footer div'); if (footer) footer.innerHTML = '<button class="btn-outline btn-sm btn-viewsubmission">View Submission</button>';
+
+                // Determine a displayable submitted date (use local time immediately)
+                const submittedDate = (new Date()).toISOString();
+                const displayDate = (new Date(submittedDate)).toLocaleDateString();
+                // update footer deadline with timestamp
+                const deadline = card.querySelector('.deadline'); if (deadline) deadline.innerHTML = '<i class="fas fa-check"></i> Submitted: ' + displayDate;
+
+                // replace footer buttons with a single View button (opens the assignment URL)
+                const footer = card.querySelector('.assignment-footer div');
+                if (footer) {
+                    const url = card.dataset.url || '';
+                    footer.innerHTML = `<button class="btn-primary btn-sm btn-open" data-url="${escapeHtml(url)}">View</button>`;
+                    const newBtn = footer.querySelector('.btn-open');
+                    if (newBtn) newBtn.addEventListener('click', (ev) => { if (url) window.open(url, '_blank'); else alert('No URL provided for this assignment.'); });
+                }
+
+                // locally persist the completion timestamp for non-Firebase fallback
+                try {
+                    if (!hasFirebase) {
+                        const arr = JSON.parse(localStorage.getItem('assignmentCompletions') || '[]');
+                        arr.push({ id: Date.now().toString(), assignmentId: aid, userId: userId, completedAt: submittedDate });
+                        localStorage.setItem('assignmentCompletions', JSON.stringify(arr));
+                    }
+                } catch (e) { /* ignore */ }
+
                 // refresh tabs
                 activateTab(tabs.find(t=>t.classList.contains('active')).dataset.filter);
             } catch (err) { console.error('Error saving completion', err); alert('Failed to mark completed.'); }
@@ -216,6 +285,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // finally, set initial tab to pending
         activateTab('pending');
+        // hide the loading spinner now that content is ready
+        hideSpinner();
     }
 
     // small helpers

@@ -87,68 +87,28 @@
 
             <div class="content-area">
                 <div class="live-session-container">
-                    <div class="session-status-card">
+                    <div class="session-status-card" style="position:relative;">
+                        <div id="sessionSpinner" class="loader" aria-hidden="false" style="display:block;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20;">
+                            <div class="spinner" aria-hidden="true"></div>
+                        </div>
+
                         <div class="status-indicator">
                             <div class="status-light" id="statusLight"></div>
-                            <span class="status-text" id="statusText">No Active Session</span>
+                            <span class="status-text" id="statusText"></span>
                         </div>
-                        <div class="session-details" id="sessionDetails">
-                            <h3>Next Session: Computer Applications Workshop</h3>
-                            <p><i class="fas fa-calendar"></i> November 22, 2025</p>
-                            <p><i class="fas fa-clock"></i> 2:00 PM - 4:00 PM</p>
-                            <p><i class="fas fa-user"></i> Instructor: Dr. Jane Smith</p>
+
+                        <div id="pendingLabel" class="pending-label" style="display:none;">Upcoming Session</div>
+
+                        <div class="session-details" id="sessionDetails" style="display:none;">
+                            <!-- Session details will be initialized from Firebase and injected here -->
                         </div>
-                        <button class="btn-primary btn-large" id="joinSessionBtn">
+
+                        <button class="btn-primary btn-large" id="joinSessionBtn" style="display:none;">
                             <i class="fas fa-video"></i> Click Here to Join
                         </button>
+                        <button class="btn-outline" id="refreshSessionBtn" style="display:none;margin-left:8px;">Refresh</button>
                     </div>
 
-                    <div class="upcoming-sessions">
-                        <h3><i class="fas fa-calendar-alt"></i> Upcoming Live Sessions</h3>
-                        <div class="session-list">
-                            <div class="session-item-card">
-                                <div class="session-date-badge">
-                                    <span class="day">22</span>
-                                    <span class="month">Nov</span>
-                                </div>
-                                <div class="session-info">
-                                    <h4>Computer Applications Workshop</h4>
-                                    <p class="session-time"><i class="fas fa-clock"></i> 2:00 PM - 4:00 PM</p>
-                                    <p class="session-instructor"><i class="fas fa-user"></i> Dr. Jane Smith</p>
-                                    <p class="session-topic">Advanced Excel Techniques</p>
-                                </div>
-                                <button class="btn-outline btn-sm">Set Reminder</button>
-                            </div>
-
-                            <div class="session-item-card">
-                                <div class="session-date-badge">
-                                    <span class="day">25</span>
-                                    <span class="month">Nov</span>
-                                </div>
-                                <div class="session-info">
-                                    <h4>Digital Literacy Session</h4>
-                                    <p class="session-time"><i class="fas fa-clock"></i> 10:00 AM - 12:00 PM</p>
-                                    <p class="session-instructor"><i class="fas fa-user"></i> Prof. John Doe</p>
-                                    <p class="session-topic">Internet Safety & Security</p>
-                                </div>
-                                <button class="btn-outline btn-sm">Set Reminder</button>
-                            </div>
-
-                            <div class="session-item-card">
-                                <div class="session-date-badge">
-                                    <span class="day">28</span>
-                                    <span class="month">Nov</span>
-                                </div>
-                                <div class="session-info">
-                                    <h4>Presentation Skills Workshop</h4>
-                                    <p class="session-time"><i class="fas fa-clock"></i> 3:00 PM - 5:00 PM</p>
-                                    <p class="session-instructor"><i class="fas fa-user"></i> Dr. Jane Smith</p>
-                                    <p class="session-topic">PowerPoint Mastery</p>
-                                </div>
-                                <button class="btn-outline btn-sm">Set Reminder</button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </main>

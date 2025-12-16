@@ -108,7 +108,14 @@ function loadSectionData(sectionName) {
             loadDashboardStats();
             break;
         case 'assignments':
-            loadAssignments();
+            // Open the Manage Assignments panel by default for admins
+            try {
+                const assignmentsList = document.getElementById('assignmentsList'); if (assignmentsList) assignmentsList.style.display = 'none';
+                const managePanel = document.getElementById('manageAssignmentsPanel'); if (managePanel) managePanel.style.display = 'block';
+                const achievedPanel = document.getElementById('achievedAssignmentsPanel'); if (achievedPanel) achievedPanel.style.display = 'none';
+            } catch (e) { /* ignore */ }
+            // load the manage assignments list (function declared later)
+            try { loadManageAssignments(); } catch (e) { /* ignore */ }
             break;
         case 'live-sessions':
             loadLiveSessions();
@@ -962,11 +969,11 @@ async function loadManageAssignments() {
                 const active = items.filter(a => a.status !== 'achieved');
                 if (!active.length) { manageAssignmentsList.innerHTML = '<p class="no-data">No assignments found.</p>'; return; }
                 manageAssignmentsList.innerHTML = active.map(a => `
-                    <div class="assignment-card" style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:10px;border-bottom:1px solid var(--border-color);">
+                    <div class="assignment-card" data-id="${a.id}" style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:10px;border-bottom:1px solid var(--border-color);cursor:pointer;">
                         <div style="flex:1">
                             <h4 style="margin:0">${escapeHtml(a.title||'')}</h4>
-                            <div style="color:var(--text-light);font-size:0.9rem">Module ${escapeHtml(a.module||'')}</div>
-                            <div style="margin-top:6px">${escapeHtml(a.instructions||'')}</div>
+                            <div style="color:var(--text-light);font-size:0.85rem">Module ${escapeHtml(a.module||'')}</div>
+                            <div class="assignment-excerpt" style="margin-top:6px;color:var(--text-light);font-size:0.95rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${escapeHtml(a.instructions||'')}</div>
                         </div>
                         <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
                             <button class="btn btn-sm btn-outline btn-edit" data-id="${a.id}"><i class="fas fa-edit"></i></button>
@@ -974,6 +981,21 @@ async function loadManageAssignments() {
                         </div>
                     </div>
                 `).join('');
+                // enforce grid layout (inline styles to override any runtime changes)
+                try {
+                    manageAssignmentsList.style.display = 'grid';
+                    manageAssignmentsList.style.gridTemplateColumns = (window.innerWidth && window.innerWidth <= 900) ? '1fr' : 'repeat(2, minmax(0, 1fr))';
+                    manageAssignmentsList.style.gap = '20px';
+                } catch (e) {}
+
+                // wire click handlers for cards to show full details
+                manageAssignmentsList.querySelectorAll('.assignment-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        if (e.target.closest('button')) return; // ignore clicks on buttons
+                        const id = card.dataset.id; if (!id) return;
+                        showManageAssignmentDetails(id);
+                    });
+                });
 
                 // wire actions
                 manageAssignmentsList.querySelectorAll('.btn-edit').forEach(b => b.addEventListener('click', () => editAssignment(b.dataset.id)));
@@ -989,11 +1011,11 @@ async function loadManageAssignments() {
         const active = (assignments||[]).filter(a => a.status !== 'achieved');
         if (!active.length) { manageAssignmentsList.innerHTML = '<p class="no-data">No assignments found.</p>'; return; }
         manageAssignmentsList.innerHTML = active.slice().reverse().map(a => `
-            <div class="assignment-card" style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:10px;border-bottom:1px solid var(--border-color);">
+            <div class="assignment-card" data-id="${a.id}" style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:10px;border-bottom:1px solid var(--border-color);cursor:pointer;">
                 <div style="flex:1">
                     <h4 style="margin:0">${escapeHtml(a.title||'')}</h4>
-                    <div style="color:var(--text-light);font-size:0.9rem">Module ${escapeHtml(a.module||'')}</div>
-                    <div style="margin-top:6px">${escapeHtml(a.instructions||'')}</div>
+                    <div style="color:var(--text-light);font-size:0.85rem">Module ${escapeHtml(a.module||'')}</div>
+                    <div class="assignment-excerpt" style="margin-top:6px;color:var(--text-light);font-size:0.95rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${escapeHtml(a.instructions||'')}</div>
                 </div>
                 <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
                     <button class="btn btn-sm btn-outline btn-edit" data-id="${a.id}"><i class="fas fa-edit"></i></button>
@@ -1001,6 +1023,14 @@ async function loadManageAssignments() {
                 </div>
             </div>
         `).join('');
+        // wire click handlers for cards to show full details
+        manageAssignmentsList.querySelectorAll('.assignment-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('button')) return; // ignore clicks on buttons
+                const id = card.dataset.id; if (!id) return;
+                showManageAssignmentDetails(id);
+            });
+        });
         manageAssignmentsList.querySelectorAll('.btn-edit').forEach(b => b.addEventListener('click', () => editAssignment(b.dataset.id)));
         manageAssignmentsList.querySelectorAll('.btn-achieve').forEach(b => b.addEventListener('click', () => achieveAssignment(b.dataset.id)));
     } catch (e) { manageAssignmentsList.innerHTML = '<p class="no-data">No assignments found.</p>'; }
@@ -1026,6 +1056,42 @@ async function achieveAssignment(id) {
     // refresh lists
     loadManageAssignments();
     loadAssignments();
+}
+
+// Show full assignment details in the lower panel
+async function showManageAssignmentDetails(id) {
+    if (!id) return;
+    const container = document.getElementById('manageAssignmentContent');
+    if (!container) return;
+    // Try Firestore first
+    let data = null;
+    try {
+        if (window.firebase && firebase.firestore) {
+            const doc = await firebase.firestore().collection('assignments').doc(id).get();
+            if (doc && doc.exists) data = { id: doc.id, ...(doc.data()||{}) };
+        }
+    } catch (e) { console.debug('fetch assignment detail SDK failed', e); }
+    // fallback to localStorage
+    if (!data) {
+        try { const assignments = JSON.parse(localStorage.getItem('assignments')||'[]'); data = assignments.find(a => a.id === id) || null; } catch(e) { data = null; }
+    }
+    if (!data) { container.style.display = 'none'; alert('Assignment not found'); return; }
+
+    container.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px">
+            <h3 style="margin:0">${escapeHtml(data.title||'')}</h3>
+            <div style="display:flex;gap:8px">
+                <button class="btn btn-secondary" id="manageAssignmentBack">Close</button>
+            </div>
+        </div>
+        <div style="padding:8px">
+            <div style="color:var(--text-light);margin-bottom:8px"><strong>Module:</strong> ${escapeHtml(data.module||'')}</div>
+            <div style="color:var(--text-light);margin-bottom:8px"><strong>Due:</strong> ${data.dueDate ? escapeHtml(data.dueDate) : '—'}</div>
+            <div style="margin-top:6px">${escapeHtml(data.instructions||'')}</div>
+        </div>
+    `;
+    container.style.display = 'block';
+    const btn = document.getElementById('manageAssignmentBack'); if (btn) btn.addEventListener('click', () => { container.style.display = 'none'; });
 }
 
 async function editAssignment(id) {

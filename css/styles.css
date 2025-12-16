@@ -348,6 +348,9 @@ h1, h2, h3, h4, h5, h6 {
 .modal-inner img, #postModalContent img { max-width:100%; height:auto; display:block; }
 #postModalContent { word-break:break-word; }
 
+/* Helper to quickly disable page scrolling (fallback for older browsers) */
+.no-scroll { overflow: hidden !important; }
+
 /* Prevent any element from causing horizontal overflow */
 img, iframe, embed, object, video { max-width: 100%; height: auto; }
 

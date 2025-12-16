@@ -58,3 +58,4 @@ JITSI Meeting Embed Code
   - Responses for login fails and all that
   - Raise z index of the side navs
   - Google analytics
+  - Page titles

@@ -399,6 +399,35 @@ body {
     width: 100%;
 }
 
+/* Generic button base used by small inline controls and modals */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.12s ease;
+    gap: 8px;
+}
+
+/* Secondary (cancel) button style for modals */
+.btn-secondary {
+    background: transparent;
+    color: var(--text-dark);
+    border: 1px solid var(--gray);
+    box-shadow: none;
+    padding: 10px 14px;
+}
+.btn-secondary:hover {
+    background: #f8fafc;
+    transform: translateY(-1px);
+}
+
+
 .login-footer {
     text-align: center;
     margin-top: 20px;
@@ -1087,6 +1116,34 @@ html:not(.sidebar-collapsed) .nav-text {
     box-shadow: var(--shadow);
     text-align: center;
     margin-bottom: 30px;
+    min-height: 220px;
+}
+
+/* Ensure certificate card keeps its shape while content is hidden */
+#studentCertificateArea, .certificate-message {
+    min-height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 520px;
+    max-width: 760px;
+}
+
+/* Responsive: allow certificate card to fit small screens */
+@media (max-width: 600px) {
+    #studentCertificateArea, .certificate-message {
+        min-width: auto;
+        width: calc(100% - 32px);
+        max-width: none;
+        margin: 0 12px;
+        min-height: 200px;
+        padding: 20px;
+    }
+    #certificateSpinner {
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
 }
 
 .status-indicator {
@@ -1138,6 +1195,13 @@ html:not(.sidebar-collapsed) .nav-text {
     font-size: 14px;
     color: var(--text-light);
     margin-bottom: 8px;
+}
+
+.pending-label{
+    font-size:16px;
+    color:var(--text-muted,#6b7280);
+    margin-bottom:18px;
+    font-weight:600;
 }
 
 .btn-large {

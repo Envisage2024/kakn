@@ -97,13 +97,40 @@ function renderSessionDetails(current, next) {
 function escapeHtml(str){ return (str||'').toString().replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 async function refreshSessions() {
+    const spinner = document.getElementById('sessionSpinner');
+    const sessionDetails = document.getElementById('sessionDetails');
+    const joinBtn = document.getElementById('joinSessionBtn');
+    const statusIndicator = document.querySelector('.status-indicator');
+    const pendingLabel = document.getElementById('pendingLabel');
+    const refreshBtn = document.getElementById('refreshSessionBtn');
+
+    if (spinner) { spinner.style.display = 'block'; spinner.setAttribute('aria-hidden', 'false'); }
+    if (sessionDetails) sessionDetails.style.display = 'none';
+    if (joinBtn) joinBtn.style.display = 'none';
+    if (statusIndicator) statusIndicator.style.visibility = 'hidden';
+    if (pendingLabel) pendingLabel.style.display = 'none';
+    if (refreshBtn) refreshBtn.style.display = 'none';
+
     const current = await fetchSessionDoc('current');
     const next = await fetchSessionDoc('next');
+
     renderStatus(current);
     renderSessionDetails(current, next);
-    // store room in join button dataset
-    const joinBtn = document.getElementById('joinSessionBtn');
+
     if (joinBtn) joinBtn.dataset.room = (current && current.room) || '';
+
+    if (spinner) { spinner.style.display = 'none'; spinner.setAttribute('aria-hidden', 'true'); }
+    if (sessionDetails) sessionDetails.style.display = (current || next) ? 'block' : 'none';
+    if (statusIndicator) statusIndicator.style.visibility = '';
+
+    // When there's no active (current) session, show Pending label and a Refresh button
+    if (!(current && current.active)) {
+        if (pendingLabel) pendingLabel.style.display = 'block';
+        if (refreshBtn) refreshBtn.style.display = 'inline-block';
+    } else {
+        if (pendingLabel) pendingLabel.style.display = 'none';
+        if (refreshBtn) refreshBtn.style.display = 'none';
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -138,6 +165,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const openUrl = normalizeMeetInput(room);
         if (!openUrl) return alert('Configured meeting link/code is invalid. Contact the admin to provide a proper Google Meet URL or meeting code.');
         window.open(openUrl, '_blank');
+    });
+
+    const refreshBtn = document.getElementById('refreshSessionBtn');
+    if (refreshBtn) refreshBtn.addEventListener('click', async () => {
+        // simple visual feedback
+        refreshBtn.disabled = true;
+        refreshBtn.textContent = 'Refreshing...';
+        try {
+            await refreshSessions();
+        } finally {
+            refreshBtn.disabled = false;
+            refreshBtn.textContent = 'Refresh';
+        }
     });
 
     if (closeModal) closeModal.addEventListener('click', () => {

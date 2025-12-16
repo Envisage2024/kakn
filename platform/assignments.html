@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assignments - KAKN Sites Learning Platform</title>
     <link rel="icon" type="image/x-icon" href="../images/logo.png">
+    <style>
+        /* Critical spinner styles so it appears before external CSS loads */
+        #assignmentsSpinner{min-height:140px;display:flex;align-items:center;justify-content:center}
+        .spinner{width:48px;height:48px;border-radius:50%;border:5px solid rgba(0,0,0,0.08);border-top-color:#2563eb;animation:spin 1s linear infinite;box-shadow:0 6px 18px rgba(37,99,235,0.12)}
+        @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        /* Ensure the container area has a neutral background while loading */
+        body{background:#f9fafb}
+    </style>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -101,52 +109,9 @@
                 </div>
 
                 <div class="assignments-container" id="assignmentsContainer">
-                    <div class="assignment-card" data-status="pending">
-                        <div class="assignment-header">
-                            <h3>Week 1: Introduction to ICT</h3>
-                            <span class="status-badge pending">Pending</span>
-                        </div>
-                        <p class="assignment-description">Complete the introductory assignment on computer basics and digital literacy.</p>
-                        <div class="assignment-footer">
-                            <span class="deadline"><i class="fas fa-calendar"></i> Due: Nov 25, 2025</span>
-                            <button class="btn-primary btn-sm">Submit</button>
-                        </div>
-                    </div>
-
-                    <div class="assignment-card" data-status="pending">
-                        <div class="assignment-header">
-                            <h3>Week 2: Microsoft Office Basics</h3>
-                            <span class="status-badge pending">Pending</span>
-                        </div>
-                        <p class="assignment-description">Create a document and spreadsheet showcasing basic formatting skills.</p>
-                        <div class="assignment-footer">
-                            <span class="deadline"><i class="fas fa-calendar"></i> Due: Nov 28, 2025</span>
-                            <button class="btn-primary btn-sm">Submit</button>
-                        </div>
-                    </div>
-
-                    <div class="assignment-card" data-status="completed">
-                        <div class="assignment-header">
-                            <h3>Pre-Course Assessment</h3>
-                            <span class="status-badge completed">Completed</span>
-                        </div>
-                        <p class="assignment-description">Initial assessment to gauge your current ICT knowledge level.</p>
-                        <div class="assignment-footer">
-                            <span class="deadline"><i class="fas fa-check"></i> Submitted: Nov 15, 2025</span>
-                            <button class="btn-outline btn-sm">View Submission</button>
-                        </div>
-                    </div>
-
-                    <div class="assignment-card" data-status="reviewed">
-                        <div class="assignment-header">
-                            <h3>Digital Communication Assignment</h3>
-                            <span class="status-badge reviewed">Reviewed</span>
-                        </div>
-                        <p class="assignment-description">Email etiquette and professional communication task.</p>
-                        <div class="assignment-footer">
-                            <span class="deadline"><i class="fas fa-star"></i> Score: 95/100</span>
-                            <button class="btn-outline btn-sm">View Feedback</button>
-                        </div>
+                    <!-- Initial spinner visible immediately while Firebase initialises -->
+                    <div id="assignmentsSpinner" class="section-spinner" style="min-height:140px;display:flex;align-items:center;justify-content:center;">
+                        <div class="spinner"></div>
                     </div>
                 </div>
             </div>

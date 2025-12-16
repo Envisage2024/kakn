@@ -259,7 +259,80 @@
                 padding: 20px;
             }
             .dashboard-card h3 { margin:0 0 12px 0;color:var(--text-dark);font-size:1.1rem }
+            /* Live Sessions panels: cleaner card, meta rows, and responsive actions */
+            .session-panel {
+                background: transparent; /* contained inside .form-card */
+                border-radius: 8px;
+                padding: 0;
+                display: block;
+            }
+            #liveSessionsCard .session-panel > h3 { margin: 0 0 8px 0; font-size:1.05rem; display:block; color:var(--text-dark); }
+            .session-card-inner {
+                background: #ffffff;
+                border-radius: 12px;
+                padding: 16px;
+                box-shadow: 0 6px 20px rgba(2,8,23,0.06);
+                display:flex;
+                gap:16px;
+                align-items:flex-start;
+                flex-wrap:wrap;
+            }
+            .session-thumbnail {
+                width:64px; height:64px; border-radius:8px; background:#f3f4f6; display:flex;align-items:center;justify-content:center;color:var(--primary-blue);font-size:20px;flex:0 0 64px
+            }
+            .session-details { flex:1 1 320px; min-width:180px }
+            .session-title { font-weight:700;margin:0 0 6px 0;color:var(--text-dark) }
+            .session-topic { color:var(--text-light); margin:0 0 8px 0 }
+            .session-meta { display:flex;flex-wrap:wrap;gap:12px;color:var(--text-light);font-size:0.95rem }
+            .meta-item { display:flex;gap:8px;align-items:center;color:var(--text-dark) }
+            .meta-item i { color:var(--primary-blue); min-width:16px }
+            .session-actions { display:flex;gap:8px;align-items:center;justify-content:flex-end;flex:0 0 auto }
+
+            /* Mobile: stack content and place actions below details */
+            @media (max-width:900px) {
+                .session-card-inner { flex-direction:column; align-items:stretch }
+                .session-thumbnail { margin:0 auto 6px auto }
+                .session-actions { justify-content:flex-start; width:100%; margin-top:8px }
+                #liveSessionsCard { padding:12px }
+            }
             .no-data { color: var(--text-light); font-style: italic }
+
+            /* Messages: make the messages section fill the viewport so the
+               page itself doesn't scroll — only the conversations/message
+               panes scroll internally. */
+            .admin-section.active#section-messages .messages-container {
+                display: flex;
+                gap: 18px;
+                /* account for header + top padding so container fits fully in viewport */
+                height: calc(100vh - 140px);
+                max-height: calc(100vh - 140px);
+                overflow: hidden;
+                align-items: stretch;
+                box-sizing: border-box;
+                padding: 6px 0 0 0;
+            }
+            .admin-section.active#section-messages .messages-list {
+                flex: 0 0 320px;
+                width: 320px;
+                overflow: auto;
+                padding: 12px;
+                box-sizing: border-box;
+            }
+            .admin-section.active#section-messages .message-thread {
+                flex: 1 1 auto;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                padding: 0 12px 12px 12px;
+                box-sizing: border-box;
+            }
+            .admin-section.active#section-messages #messageThreadHeader { flex: 0 0 auto }
+            .admin-section.active#section-messages #messageThreadContent { flex: 1 1 auto; overflow: auto; padding:12px; box-sizing:border-box }
+            .admin-section.active#section-messages #messageReplyForm { flex: 0 0 auto; padding-top:8px }
+            @media (max-width:900px) {
+                .admin-section.active#section-messages .messages-container { flex-direction: column; height: calc(100vh - 120px); max-height: calc(100vh - 120px); }
+                .admin-section.active#section-messages .messages-list { width: 100%; flex: 0 0 auto; max-height: 220px }
+            }
 
             /* Video tiles (admin) - responsive grid matching platform; centered container (.videos-inner) */
             .videos-inner { max-width: 1100px; margin: 0 auto; width: 100%; }
@@ -299,6 +372,11 @@
             @media (max-width:700px) {
                 .admin-videos-grid { grid-template-columns: 1fr; }
                 .admin-videos-grid .video-thumbnail { height:180px }
+            }
+
+            /* Force 3-column layout on wide viewports so videos fill across first */
+            @media (min-width:1101px) {
+                .admin-videos-grid { grid-template-columns: repeat(3, minmax(280px, 1fr)) !important; }
             }
 
             /* Forms and lists inside sections should match platform spacing */
@@ -397,7 +475,117 @@
                 /* Center all major content blocks inside the centered column so
                    every card/list has the same gutters on mobile. Keep width:100%
                    so internal grids become single-column naturally. */
-                .admin-content > .stats-grid,
+                /* (stats grid selector removed here to avoid selector split issues) */
+                /* Remove default blue focus outline for admin header buttons (Achieved etc.)
+                   Target the specific Achieved button and outlined buttons with high specificity
+                   and keep focus semantics but remove the visual browser ring. */
+                #achievedAssignmentsBtn:focus,
+                #achievedAssignmentsBtn:focus-visible,
+                .admin-section .btn-outline:focus,
+                .admin-section .btn-outline:focus-visible,
+                .admin-section .btn:focus,
+                .admin-section .btn:focus-visible {
+                    outline: none !important;
+                    box-shadow: none !important;
+                }
+
+                /* Manage Assignments: force a 2x2 CSS grid so two cards fit across */
+                #manageAssignmentsList {
+                    display: grid !important;
+                    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                    gap: 20px !important;
+                    align-items: start !important;
+                    grid-auto-rows: minmax(120px, auto) !important;
+                }
+
+                /* Each tile fills its grid cell */
+                #manageAssignmentsList > .assignment-card {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    box-sizing: border-box !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                    height: auto !important;
+                    border-bottom: none !important;
+                    background: #fff;
+                    border-radius: 12px;
+                    box-shadow: 0 8px 30px rgba(2,8,23,0.06);
+                    padding: 12px !important;
+                    align-items: flex-start !important;
+                }
+
+                /* Compact card styles for 2-across layout */
+                #manageAssignmentsList > .assignment-card h4 { font-size: 1rem !important; margin: 0 0 6px 0 !important; }
+                #manageAssignmentsList > .assignment-card .assignment-excerpt { font-size: 0.9rem !important; color: var(--text-light) !important; }
+                #manageAssignmentsList > .assignment-card .badge { font-size: 0.75rem !important; padding: 4px 8px !important; }
+
+
+
+                /* On small screens use single column */
+                @media (max-width:900px) {
+                    #manageAssignmentsList { grid-template-columns: 1fr !important; }
+                }
+
+                /* Extra aggressive fallback: float-based two-column layout to override any runtime styles */
+                #manageAssignmentsList { overflow: hidden !important; }
+                #manageAssignmentsList > .assignment-card {
+                    float: left !important;
+                    width: calc(50% - 20px) !important;
+                    margin-right: 20px !important;
+                    margin-bottom: 20px !important;
+                }
+                /* clear the last item in each row to avoid uneven wrapping */
+                #manageAssignmentsList > .assignment-card:nth-child(2n) { margin-right: 0 !important; }
+                @media (max-width:900px) {
+                    #manageAssignmentsList > .assignment-card { float:none !important; width:100% !important; margin-right:0 !important; }
+                }
+
+                /* Fallback: force inline-block two-column layout to override any JS/inline styles */
+                #manageAssignmentsList { text-align: left !important; }
+                #manageAssignmentsList > .assignment-card {
+                    display: inline-block !important;
+                    vertical-align: top !important;
+                    width: calc(50% - 10px) !important;
+                    margin: 0 10px 20px 0 !important;
+                    box-sizing: border-box !important;
+                }
+                @media (max-width:900px) {
+                    #manageAssignmentsList > .assignment-card { width: 100% !important; margin-right: 0 !important; }
+                }
+
+                /* Strong ID-specific overrides for Achieved button to remove blue border/ring */
+                #achievedAssignmentsBtn {
+                    border: 2px solid rgba(0,0,0,0.08) !important;
+                    background: #ffffff !important;
+                    color: var(--primary-blue) !important;
+                    box-shadow: none !important;
+                }
+                #achievedAssignmentsBtn:hover { background: var(--light-blue, #f1f7ff) !important; }
+                #achievedAssignmentsBtn:focus,
+                #achievedAssignmentsBtn:focus-visible,
+                #achievedAssignmentsBtn:active {
+                    outline: none !important;
+                    box-shadow: none !important;
+                    border-color: rgba(0,0,0,0.08) !important;
+                }
+                /* Extra aggressive overrides to make sure user-agent rings are disabled */
+                button#achievedAssignmentsBtn,
+                button#achievedAssignmentsBtn.btn-outline,
+                button#achievedAssignmentsBtn.btn-outline:focus,
+                button#achievedAssignmentsBtn.btn-outline:focus-visible,
+                button#achievedAssignmentsBtn.btn-outline:active {
+                    -webkit-appearance: none !important;
+                    appearance: none !important;
+                    outline: none !important;
+                    outline-color: transparent !important;
+                    outline-offset: 0 !important;
+                    box-shadow: none !important;
+                    -webkit-box-shadow: none !important;
+                    border: 2px solid rgba(0,0,0,0.08) !important;
+                    border-color: rgba(0,0,0,0.08) !important;
+                    background: #ffffff !important;
+                    color: var(--primary-blue) !important;
+                }
                 .admin-content > .dashboard-content,
                 .admin-content > .dashboard-card,
                 .admin-content .form-card,
@@ -496,6 +684,37 @@
                 /* Make video grid single-column on small screens */
                 .admin-videos-grid { grid-template-columns: 1fr !important; }
             }
+            /* Mobile: fix the live sessions card to viewport and prevent page scroll
+               so the card remains visible and centered on small devices. */
+            @media (max-width:900px) {
+                body.admin-body { overflow: hidden; }
+                #liveSessionsCard {
+                    position: fixed;
+                    left: 12px;
+                    right: 12px;
+                    top: 78px; /* below fixed header */
+                    bottom: 18px;
+                    z-index: 1050;
+                    overflow: auto;
+                    border-radius: 12px;
+                    padding: 12px;
+                    box-shadow: 0 10px 30px rgba(2,8,23,0.12);
+                    background: #ffffff;
+                }
+                /* Ensure the inner card uses full width inside fixed container */
+                .session-card-inner { width: 100%; box-sizing: border-box }
+
+                /* Tighten spacing and reduce sizes so actions sit closer to details */
+                .session-card-inner { padding: 10px; gap: 8px }
+                .session-thumbnail { width:48px; height:48px; flex:0 0 48px; font-size:18px }
+                .session-title { font-size:0.98rem }
+                .session-topic { font-size:0.9rem }
+                .session-meta { gap:8px; font-size:0.9rem }
+                /* Make actions compact and flow right after details (auto width) */
+                .session-actions { justify-content:flex-start; width:auto; margin-top:6px; gap:6px }
+                /* Smaller button sizing inside the live sessions card on mobile */
+                #liveSessionsCard .session-actions .btn-sm { padding:6px 8px; font-size:0.92rem }
+            }
         </style>
         <script>
             try {
@@ -503,10 +722,13 @@
                 // On large screens show expanded sidebar by default.
                 const minWidthToExpand = 900;
                 const stored = localStorage.getItem('sidebarCollapsed');
+                const sidebarEl = document.getElementById('adminSidebar');
                 if (stored === 'true' && window.innerWidth <= minWidthToExpand) {
                     document.documentElement.classList.add('sidebar-collapsed');
+                    if (sidebarEl) sidebarEl.classList.add('collapsed','active');
                 } else {
                     document.documentElement.classList.remove('sidebar-collapsed');
+                    if (sidebarEl) sidebarEl.classList.remove('collapsed','active','mobile-open');
                 }
             } catch (e) {}
         </script>
@@ -558,7 +780,64 @@
             
             <nav class="sidebar-nav">
                 <a href="#dashboard" class="sidebar-link active" data-section="dashboard">
-                    <i class="fas fa-tachometer-alt"></i>
+                    <script>
+                        // Notes search: filter notes by title as user types
+                        (function(){
+                            function getCardTitle(card){
+                                if (!card) return '';
+                                if (card.dataset && card.dataset.title) return card.dataset.title.trim();
+                                const h = card.querySelector('h3, h4, h5, .note-title, .title');
+                                if (h && h.textContent) return h.textContent.trim();
+                                // fallback: first line of textContent
+                                return (card.textContent||'').trim().split('\n')[0].trim();
+                            }
+
+                            function applyFilter(q){
+                                const list = document.getElementById('notesList');
+                                if (!list) return;
+                                const items = Array.from(list.children).filter(c => c.nodeType===1 && !c.classList.contains('no-data'));
+                                let any = false;
+                                const needle = q.trim().toLowerCase();
+                                if (!needle){
+                                    items.forEach(i => { i.style.display = ''; });
+                                } else {
+                                    items.forEach(i => {
+                                        const title = getCardTitle(i).toLowerCase();
+                                        const visible = title.indexOf(needle) !== -1;
+                                        i.style.display = visible ? '' : 'none';
+                                        if (visible) any = true;
+                                    });
+                                }
+
+                                // show appropriate no-data message
+                                const noData = list.querySelector('.no-data');
+                                if (noData) {
+                                    if (!items.length) {
+                                        noData.textContent = 'No notes uploaded yet. Click "Upload New Note" to add one.';
+                                        noData.style.display = '';
+                                    } else if (!needle) {
+                                        noData.style.display = 'none';
+                                    } else {
+                                        noData.textContent = any ? '' : 'No notes match your search';
+                                        noData.style.display = any ? 'none' : '';
+                                    }
+                                }
+                            }
+
+                            document.addEventListener('DOMContentLoaded', function(){
+                                const input = document.getElementById('noteSearchInput');
+                                if (!input) return;
+                                let t = null;
+                                input.addEventListener('input', function(e){
+                                    clearTimeout(t);
+                                    t = setTimeout(() => applyFilter(input.value || ''), 160);
+                                });
+                                // run once to set initial state
+                                applyFilter('');
+                            });
+                        })();
+                        </script>
+
                     <span>Dashboard</span>
                 </a>
                 <a href="#assignments" class="sidebar-link" data-section="assignments">
@@ -697,7 +976,7 @@
                 <button class="btn btn-secondary" id="scoreRespondentsBtn" style="margin-left:10px;">
                     <i class="fas fa-pen"></i> Score Respondents
                 </button>
-                <button class="btn btn-outline" id="achievedAssignmentsBtn" style="margin-left:10px;">
+                <button class="btn btn-secondary" id="achievedAssignmentsBtn" style="margin-left:10px;">
                     <i class="fas fa-check-circle"></i> Achieved
                 </button>
 
@@ -855,6 +1134,9 @@
                     <div id="manageAssignmentsList">
                         <p class="no-data">Loading assignments...</p>
                     </div>
+                    <div id="manageAssignmentContent" class="form-card" style="display:none;margin-top:16px;">
+                        <!-- Full assignment details will be shown here when a card is clicked -->
+                    </div>
                 </div>
 
                 <!-- Achieved Assignments Panel -->
@@ -871,30 +1153,32 @@
             <!-- Live Sessions Section -->
             <section id="section-live-sessions" class="admin-section">
                 <h2><i class="fas fa-video"></i> Live Sessions</h2>
-                <div class="form-card" id="liveSessionsCard">
+                <div class="form-card" id="liveSessionsCard" style="max-width:980px;margin:0 auto;">
                     <!-- Controls moved into Current Session panel (Start/Stop) -->
                     <div style="display:flex;gap:12px;align-items:center;justify-content:flex-start;margin-bottom:12px;">
-                        <span style="color:var(--text-light)">Manage sessions below.</span>
+                        <span style="color:var(--text-light)">Manage upcoming or current session below.</span>
                     </div>
 
-                    <div id="liveSessionPanels" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div id="liveSessionPanels" style="display:grid;grid-template-columns:1fr;gap:12px;">
                         <div class="session-panel" id="currentSessionPanel">
-                            <h3>Current Session
-                                <div style="float:right;display:flex;gap:8px;align-items:center;">
+                            <h3>Upcoming / Current Session</h3>
+                            <div class="session-card-inner">
+                                <div class="session-thumbnail"><i class="fas fa-video"></i></div>
+                                <div class="session-details" id="currentSessionDetails">
+                                    <p class="session-title">No active session</p>
+                                    <p class="session-topic">Start a session or edit details to add one.</p>
+                                    <div class="session-meta">
+                                        <div class="meta-item"><i class="fas fa-calendar-alt"></i><span id="currentSessionDate"></span></div>
+                                        <div class="meta-item"><i class="fas fa-clock"></i><span id="currentSessionTime"></span></div>
+                                        <div class="meta-item"><i class="fas fa-user"></i><span id="currentSessionHost"></span></div>
+                                        <div class="meta-item"><i class="fas fa-hashtag"></i><span id="currentSessionRoom"></span></div>
+                                    </div>
+                                </div>
+                                <div class="session-actions">
                                     <button class="btn btn-sm btn-primary" id="startLiveSessionBtn"><i class="fas fa-play"></i> Start</button>
                                     <button class="btn btn-sm btn-secondary" id="stopLiveSessionBtn" style="display:none"><i class="fas fa-stop"></i> Stop</button>
                                     <button class="btn btn-sm btn-outline" id="editCurrentBtn"><i class="fas fa-edit"></i> Edit</button>
                                 </div>
-                            </h3>
-                                <div id="currentSessionDetails" style="padding:8px">
-                                    <p class="no-data">No active session</p>
-                                </div>
-                        </div>
-
-                        <div class="session-panel" id="nextSessionPanel">
-                            <h3>Next Session <button class="btn btn-sm btn-outline" id="editNextBtn" style="float:right"><i class="fas fa-edit"></i> Edit</button></h3>
-                            <div id="nextSessionDetails" style="Padding:8px">
-                                <p class="no-data">No upcoming session</p>
                             </div>
                         </div>
                     </div>
@@ -1005,9 +1289,16 @@
             <section id="section-notes" class="admin-section">
                 <h2><i class="fas fa-book"></i> Course Notes Management</h2>
                 
-                <button class="btn btn-primary" id="addNoteBtn">
-                    <i class="fas fa-plus"></i> Upload New Note
-                </button>
+                <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px;max-width:980px;">
+                    <div style="flex:0 0 auto;">
+                        <button class="btn btn-primary" id="addNoteBtn">
+                            <i class="fas fa-plus"></i> Upload New Note
+                        </button>
+                    </div>
+                    <div style="flex:1;max-width:640px;">
+                        <input id="noteSearchInput" type="search" placeholder="Search notes by title" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border-color);">
+                    </div>
+                </div>
 
                 <!-- Add Note Modal (opens like videos modal) -->
                 <div id="noteModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:2100;">
@@ -1187,6 +1478,18 @@
                         h2.style.display = 'block';
                     }
                 });
+
+                // When messages section is active, prevent page scrolling and
+                // allow only the message panes to scroll internally.
+                if (active.id === 'section-messages') {
+                    document.body.classList.add('messages-fullscreen');
+                    document.documentElement.style.overflow = 'hidden';
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.classList.remove('messages-fullscreen');
+                    document.documentElement.style.overflow = '';
+                    document.body.style.overflow = '';
+                }
 
                 // ensure content sits just below header: scroll a bit to align
                 window.setTimeout(() => {
