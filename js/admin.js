@@ -142,6 +142,7 @@ function loadSectionData(sectionName) {
 async function loadDashboardStats() {
     // Try Firestore first for accurate counts, otherwise fallback to localStorage
     let users = [];
+    // load assignments from localStorage as a fallback; we'll try Firestore next
     let assignments = JSON.parse(localStorage.getItem('assignments') || '[]');
     let messages = JSON.parse(localStorage.getItem('adminMessages') || '[]');
 
@@ -161,7 +162,26 @@ async function loadDashboardStats() {
     // total users should reflect approved / verified users
     const approvedCount = users.filter(u => u.verified).length;
     document.getElementById('totalUsers').textContent = approvedCount;
-    document.getElementById('totalAssignments').textContent = assignments.length;
+
+    // Compute active assignments: those not archived/achieved
+    let activeAssignmentsCount = (assignments || []).filter(a => (a.status || '').toLowerCase() !== 'achieved' && !a.archived).length;
+
+    // If Firestore is available prefer live counts from it
+    if (window.firebase && firebase.firestore) {
+        try {
+            const db = firebase.firestore();
+            const snap = await db.collection('assignments').get();
+            if (snap && !snap.empty) {
+                const items = snap.docs.map(d => ({ id: d.id, ...(d.data() || {}) }));
+                assignments = items;
+                activeAssignmentsCount = items.filter(a => ((a.status||'').toLowerCase() !== 'achieved') && !a.archived).length;
+            }
+        } catch (err) {
+            console.error('Error fetching assignments for stats from Firestore:', err);
+        }
+    }
+
+    document.getElementById('totalAssignments').textContent = activeAssignmentsCount;
 
     // Compute unread messages count from Realtime DB meta if available, otherwise fallback to localStorage
     if (window.firebase && firebase.database) {
@@ -181,8 +201,30 @@ async function loadDashboardStats() {
         document.getElementById('unreadMessages').textContent = unread;
     }
 
-    const certified = users.filter(u => u.certified).length;
-    document.getElementById('totalCertified').textContent = certified;
+    // Determine certified students using the certificates collection when possible
+    let certifiedCount = users.filter(u => u.certified).length;
+    // Prefer certificates collection as authoritative if available
+    if (window.firebase && firebase.firestore) {
+        try {
+            const certSnap = await firebase.firestore().collection('certificates').get();
+            if (certSnap && typeof certSnap.size === 'number') {
+                certifiedCount = certSnap.size;
+            } else if (certSnap && certSnap.docs) {
+                certifiedCount = certSnap.docs.length;
+            }
+        } catch (err) {
+            console.error('Failed to load certificates for stats:', err);
+            // fallback to localStorage or user flag count
+            const localCerts = JSON.parse(localStorage.getItem('certificates') || '[]');
+            if (localCerts && localCerts.length) certifiedCount = localCerts.length;
+        }
+    } else {
+        // no Firestore available, check localStorage
+        const localCerts = JSON.parse(localStorage.getItem('certificates') || '[]');
+        if (localCerts && localCerts.length) certifiedCount = localCerts.length;
+    }
+
+    document.getElementById('totalCertified').textContent = certifiedCount;
 
     // Recent enrollments (use createdAt or enrolledDate if available)
     const recentEnrollments = document.getElementById('recentEnrollments');

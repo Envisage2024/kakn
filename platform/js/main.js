@@ -143,9 +143,10 @@ function initializeSidebar() {
 function updateUserInfo() {
     const user = checkAuth();
     if (user) {
+        const displayName = user.fullName || user.displayName || (user.firstName ? (user.firstName + (user.lastName ? ' ' + user.lastName : '')) : '') || user.email || 'User';
         const userNameElements = document.querySelectorAll('#userName');
         userNameElements.forEach(el => {
-            el.textContent = `Welcome, ${user.fullName}`;
+            el.textContent = `Welcome, ${displayName}`;
         });
     }
 }
@@ -399,7 +400,16 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                             return;
                         }
-                        localStorage.setItem('currentUser', JSON.stringify({ uid: user.uid, email: user.email, fullName: user.displayName || '', verified: true }));
+                        // Prefer the profile's full name / first+last when available, then fall back to
+                        // firebase `displayName`, then the user's email.
+                        let computedName = '';
+                        try {
+                            if (profile) {
+                                computedName = profile.fullName || (profile.firstName ? (profile.firstName + (profile.lastName ? ' ' + profile.lastName : '')) : '') || profile.displayName || '';
+                            }
+                        } catch (e) { computedName = ''; }
+                        computedName = computedName || user.displayName || user.email || '';
+                        localStorage.setItem('currentUser', JSON.stringify({ uid: user.uid, email: user.email, fullName: computedName, verified: true }));
                         updateUserInfo();
                     } catch (e) {
                         console.error('Auth listener fetch profile error', e);
@@ -424,3 +434,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 200);
     }
 });
+
+// Global activity logger: other scripts call window.logActivity(type, title, meta)
+window.logActivity = async function(type, title, meta) {
+    try {
+        const user = checkAuth() || JSON.parse(localStorage.getItem('currentUser') || 'null');
+        const userId = user && (user.uid || user.id || user.email) ? (user.uid || user.id || user.email) : null;
+        const payload = { userId: userId || 'unknown', type: type || 'event', title: title || '', meta: meta || {} };
+        if (window.firebase && firebase.firestore) {
+            try {
+                const docRef = await firebase.firestore().collection('activity').add(Object.assign({}, payload, { timestamp: firebase.firestore.FieldValue.serverTimestamp() }));
+                return { ok: true, id: docRef.id };
+            } catch (e) { console.debug('logActivity firestore write failed', e); }
+        }
+        // fallback to localStorage
+        try {
+            const arr = JSON.parse(localStorage.getItem('activityLog') || '[]');
+            arr.push(Object.assign({}, payload, { timestamp: new Date().toISOString() }));
+            localStorage.setItem('activityLog', JSON.stringify(arr));
+            return { ok: true };
+        } catch (e) { console.debug('logActivity local fallback failed', e); }
+    } catch (e) { console.debug('logActivity failed', e); }
+    return { ok: false };
+};

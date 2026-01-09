@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (downloadBtn) {
         downloadBtn.addEventListener('click', function() {
             alert('Certificate download functionality will be implemented in the next phase.\n\nYour certificate would be downloaded as a PDF file.');
+            try { if (window.logActivity) window.logActivity('certificate_download', 'Certificate Download', {}); } catch(e) {}
         });
     }
 
@@ -47,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             const platform = this.textContent.trim();
             alert(`Sharing certificate on ${platform}\n\nIn a real implementation, this would open the share dialog for the selected platform.`);
+            try { if (window.logActivity) window.logActivity('certificate_share', 'Certificate Share', { platform }); } catch(e) {}
         });
     });
     // Show issued certificate link if admin has issued one
@@ -63,6 +65,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 <a class="btn btn-primary" href="${url}" target="_blank" rel="noopener noreferrer" style="margin-top:8px;text-decoration:none;display:inline-block;">Click here to view your certificate</a>
             </div>
         `;
+        // attach click handler to log certificate view
+        try {
+            const anchor = certArea.querySelector('a');
+            if (anchor) {
+                anchor.addEventListener('click', () => { try { if (window.logActivity) window.logActivity('certificate_view', 'Certificate View', { url }); } catch(e) {} });
+            }
+        } catch (e) {}
         showLoaded();
     }
 

@@ -168,20 +168,23 @@ h1, h2, h3, h4, h5, h6 {
     transform: translateY(-100%);
 }
 
-/* ===================================
-   HERO SECTION
-   =================================== */
-
 .hero {
-    background-image: linear-gradient(rgba(37, 99, 235, 0.85), rgba(16, 185, 129, 0.85)), 
-                      url('attached_assets/stock_images/digital_learning_edu_ae60e2a0.jpg');
+    /* allow pages to override with: style="--hero-image: url('images/your-image.jpg')" */
+    --hero-default-image: url('attached_assets/stock_images/digital_learning_edu_ae60e2a0.jpg');
+    /* darker gradient for better contrast over busy photos */
+    background-image: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), var(--hero-image, var(--hero-default-image));
+    background-color: #666; /* fallback if image not found */
+    background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
+    background-attachment: scroll;
     color: white;
     padding: 120px 20px;
     text-align: center;
     position: relative;
+    min-height: 420px;
+    display: flex;
+    align-items: center;
 }
 
 .hero-overlay {
@@ -190,7 +193,8 @@ h1, h2, h3, h4, h5, h6 {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(16, 185, 129, 0.8) 100%);
+    background: rgba(0,0,0,0.36); /* increased dimming */
+    pointer-events: none;
 }
 
 .hero-content {
@@ -199,6 +203,57 @@ h1, h2, h3, h4, h5, h6 {
     max-width: 900px;
     margin: 0 auto;
 }
+
+/* Force high contrast white text on hero images */
+.hero-content,
+.hero-content h1,
+.hero-content h2,
+.hero-content p,
+.hero-content a,
+.hero-title,
+.hero-subtitle {
+    color: #fff !important;
+}
+
+.hero-title,
+.hero-subtitle {
+    text-shadow: 0 6px 20px rgba(0,0,0,0.55);
+}
+
+/* Make the white (secondary) hero button readable on top of images */
+.hero .btn-secondary {
+    background-color: rgba(255,255,255,0.95);
+    color: var(--primary-blue) !important;
+    border: none;
+}
+
+.hero .btn-secondary:hover {
+    background-color: #ffffff;
+    color: var(--dark-blue) !important;
+}
+
+/* Page header (used on internal pages like research.html) */
+.page-header {
+    --page-header-default: url('attached_assets/stock_images/digital_learning_edu_ae60e2a0.jpg');
+    background-image: linear-gradient(rgba(0,0,0,0.28), rgba(0,0,0,0.28)), var(--page-header-image, var(--page-header-default));
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 120px 20px;
+    position: relative;
+}
+
+.page-header-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.22);
+    pointer-events: none;
+}
+
+.page-header .container { position: relative; z-index: 2; }
 
 .hero-title {
     font-size: 3rem;
@@ -818,9 +873,15 @@ section {
    =================================== */
 
 .cta-section {
-    background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+    /* allow per-page override with: style="--cta-image: url('../images/your.jpg')" */
+    --cta-default-image: url('../images/Pexels 1.jpg');
+    background-image: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), var(--cta-image, var(--cta-default-image));
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     color: white;
     text-align: center;
+    padding: 80px 20px;
 }
 
 .cta-section h2 {

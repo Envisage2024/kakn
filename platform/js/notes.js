@@ -107,6 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // wire actions
         listEl.querySelectorAll('.note-actions .btn-outline').forEach(b => b.addEventListener('click', (e)=>{
             const url = e.currentTarget.dataset.url; if (!url) return alert('No URL for this note'); window.open(url, '_blank');
+            try { const title = e.currentTarget.dataset.title || ''; if (window.logActivity) window.logActivity('pdf_view', title || 'PDF View', { url }); } catch(e) {}
         }));
         listEl.querySelectorAll('.note-actions .btn-primary').forEach(b => b.addEventListener('click', async (e)=>{
             const url = e.currentTarget.dataset.url; const title = e.currentTarget.dataset.title || '';
@@ -165,6 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Last resort: inform user and open in new tab
             alert('Unable to download directly due to cross-origin restrictions. The PDF will open in a new tab; if you want direct downloads, host PDFs in the same origin or configure CORS on the storage provider.');
             window.open(url, '_blank');
+            try { if (window.logActivity) window.logActivity('pdf_download', title || 'PDF Download', { url }); } catch(e) {}
         }));
 
         function extractDriveId(u) {

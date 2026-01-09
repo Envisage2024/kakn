@@ -59,3 +59,7 @@ JITSI Meeting Embed Code
   - Raise z index of the side navs
   - Google analytics
   - Page titles
+  - Make sure the background images for the sections are deemed out to allow text appear 
+  - On footer make contact things functional on click
+  - Fix testimonials spinner on index page
+  - Call to Action and page headers font size on mobile

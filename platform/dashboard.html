@@ -9,6 +9,12 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Small centered spinner used while dashboard sections load */
+        .section-spinner{display:flex;align-items:center;justify-content:center;padding:18px;min-height:64px}
+        .loader{width:28px;height:28px;border:4px solid rgba(0,0,0,0.12);border-top-color:#2d9cdb;border-radius:50%;animation:spin 1s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -55,11 +61,6 @@
                     <i class="fas fa-certificate"></i>
                     <span class="nav-text">Certificate</span>
                 </a>
-                <a href="notifications.html" class="nav-item">
-                    <i class="fas fa-bell"></i>
-                    <span class="nav-text">Notifications</span>
-                    <span class="badge" id="notifBadge">3</span>
-                </a>
                 <a href="#" class="nav-item logout" id="logoutBtn">
                     <i class="fas fa-sign-out-alt"></i>
                     <span class="nav-text">Logout</span>
@@ -88,21 +89,11 @@
             <div class="content-area">
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon blue">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <div class="stat-details">
-                            <h3 id="completionPercentage">75%</h3>
-                            <p>Course Completion</p>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
                         <div class="stat-icon orange">
                             <i class="fas fa-clipboard-list"></i>
                         </div>
                         <div class="stat-details">
-                            <h3 id="pendingAssignments">5</h3>
+                            <h3 id="pendingAssignments"></h3>
                             <p>Pending Assignments</p>
                         </div>
                     </div>
@@ -112,7 +103,7 @@
                             <i class="fas fa-play-circle"></i>
                         </div>
                         <div class="stat-details">
-                            <h3 id="newVideos">8</h3>
+                            <h3 id="newVideos"></h3>
                             <p>New Video Tutorials</p>
                         </div>
                     </div>
@@ -122,7 +113,7 @@
                             <i class="fas fa-file-pdf"></i>
                         </div>
                         <div class="stat-details">
-                            <h3 id="newNotes">12</h3>
+                            <h3 id="newNotes"></h3>
                             <p>New PDF Notes</p>
                         </div>
                     </div>
@@ -132,7 +123,7 @@
                             <i class="fas fa-envelope"></i>
                         </div>
                         <div class="stat-details">
-                            <h3 id="newMessages">3</h3>
+                            <h3 id="newMessages"></h3>
                             <p>New Messages</p>
                         </div>
                     </div>
@@ -144,33 +135,7 @@
                             <h3><i class="fas fa-clock"></i> Recent Activity</h3>
                         </div>
                         <div class="activity-list" id="activityList">
-                            <div class="activity-item">
-                                <div class="activity-icon blue">
-                                    <i class="fas fa-check"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <p class="activity-title">Assignment Submitted</p>
-                                    <p class="activity-time">2 hours ago</p>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-icon purple">
-                                    <i class="fas fa-video"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <p class="activity-title">Watched: Introduction to ICT</p>
-                                    <p class="activity-time">5 hours ago</p>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-icon green">
-                                    <i class="fas fa-file-pdf"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <p class="activity-title">Downloaded: Week 2 Notes</p>
-                                    <p class="activity-time">1 day ago</p>
-                                </div>
-                            </div>
+                            <!-- intentionally left blank; spinner will show while loading -->
                         </div>
                     </div>
 
@@ -179,26 +144,7 @@
                             <h3><i class="fas fa-calendar-alt"></i> Upcoming Sessions</h3>
                         </div>
                         <div class="sessions-list" id="sessionsList">
-                            <div class="session-item">
-                                <div class="session-date">
-                                    <span class="date-day">22</span>
-                                    <span class="date-month">Nov</span>
-                                </div>
-                                <div class="session-info">
-                                    <h4>Computer Applications Workshop</h4>
-                                    <p><i class="fas fa-clock"></i> 2:00 PM - 4:00 PM</p>
-                                </div>
-                            </div>
-                            <div class="session-item">
-                                <div class="session-date">
-                                    <span class="date-day">25</span>
-                                    <span class="date-month">Nov</span>
-                                </div>
-                                <div class="session-info">
-                                    <h4>Digital Literacy Session</h4>
-                                    <p><i class="fas fa-clock"></i> 10:00 AM - 12:00 PM</p>
-                                </div>
-                            </div>
+                            <!-- intentionally left blank; spinner will show while loading -->
                         </div>
                     </div>
                 </div>
@@ -208,6 +154,139 @@
 
     <script src="js/main.js"></script>
     <script src="js/dashboard.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sessionsList = document.getElementById('sessionsList');
+        const activityList = document.getElementById('activityList');
+
+        function showSpinner(container){ if(!container) return; container.innerHTML = '<div class="section-spinner"><div class="loader"></div></div>'; }
+
+        // show blank then spinner while loading
+        if (sessionsList) { sessionsList.innerHTML = ''; showSpinner(sessionsList); }
+        if (activityList) { activityList.innerHTML = ''; showSpinner(activityList); }
+
+        // Load single live session from local JSON file and render it
+        // First try Firestore REST for the `sessions/current` doc to match admin data
+        async function fetchFirestoreCurrent() {
+            try {
+                const project = 'kakn-sites-7c4e9';
+                const url = `https://firestore.googleapis.com/v1/projects/${project}/databases/(default)/documents/sessions/current`;
+                const res = await fetch(url);
+                if (!res.ok) return null;
+                const json = await res.json();
+                const f = json.fields || {};
+                return {
+                    title: f.title && f.title.stringValue ? f.title.stringValue : '',
+                    topic: f.topic && f.topic.stringValue ? f.topic.stringValue : '',
+                    date: f.date && f.date.stringValue ? f.date.stringValue : '',
+                    startTime: f.startTime && f.startTime.stringValue ? f.startTime.stringValue : '',
+                    endTime: f.endTime && f.endTime.stringValue ? f.endTime.stringValue : '',
+                    presenter: f.instructor && f.instructor.stringValue ? f.instructor.stringValue : (f.presenter && f.presenter.stringValue ? f.presenter.stringValue : ''),
+                    room: f.room && f.room.stringValue ? f.room.stringValue : '',
+                    active: f.active && f.active.booleanValue ? true : false
+                };
+            } catch (e) { console.debug('fetchFirestoreCurrent failed', e); return null; }
+        }
+
+        // local JSON fallback paths
+        const pathsToTry = ['./data/live-session.json', 'data/live-session.json', '/platform/data/live-session.json'];
+
+        function tryNext(paths) {
+            if (!paths.length) return Promise.reject(new Error('No paths left'));
+            const p = paths.shift();
+            return fetch(p).then(res => {
+                if (!res.ok) throw new Error('not ok');
+                return res.json();
+            }).catch(() => tryNext(paths));
+        }
+
+        // central rendering function reused for both Firestore and JSON shapes
+        function processSession(session) {
+            if (!session || !session.title) return;
+            // Clear existing sessions and render one
+            sessionsList.innerHTML = '';
+            const item = document.createElement('div');
+            item.className = 'session-item';
+
+            // Support both formats: { start/end ISO, time } and Firestore-style { date, startTime, endTime }
+            let day = '';
+            let month = '';
+            let dateObj = null;
+            if (session.start) dateObj = new Date(session.start);
+            else if (session.date) dateObj = new Date(session.date);
+            else if (session.startDate) dateObj = new Date(session.startDate);
+            if (dateObj && !isNaN(dateObj.getTime())) {
+                day = '' + dateObj.getDate();
+                month = dateObj.toLocaleString(undefined, { month: 'short' }).toUpperCase();
+            } else {
+                day = session.day || '';
+                month = (session.month || '').toUpperCase();
+            }
+
+            // Determine displayed time: prefer explicit `session.time` or Firestore `startTime`/`endTime`
+            const timeFromJson = session.time && session.time.toString().trim();
+            const startTimeField = (session.startTime || session.start_time || session.starttime || '').toString().trim();
+            const endTimeField = (session.endTime || session.end_time || session.endtime || '').toString().trim();
+            const displayTime = timeFromJson || (startTimeField ? `${startTimeField}${endTimeField ? ' - ' + endTimeField : ''}` : (session.time || ''));
+
+            item.innerHTML = `
+                <div class="session-date">
+                    <span class="date-day">${day}</span>
+                    <span class="date-month">${month}</span>
+                </div>
+                <div class="session-info">
+                    <h4>${session.title}</h4>
+                    ${session.topic ? `<p class="session-line"><i class="fas fa-book-open"></i> <strong>Topic:</strong> ${session.topic}</p>` : ''}
+                    <p class="session-line"><i class="fas fa-calendar-alt"></i> ${formatDateRange(dateObj, session.end, displayTime)}</p>
+                    ${session.presenter || session.instructor ? `<p class="session-line"><i class="fas fa-user"></i> ${session.presenter || session.instructor}</p>` : ''}
+                    
+                </div>
+            `;
+
+            sessionsList.appendChild(item);
+
+            function formatDateRange(startOrDateObj, endIsoOrUnused, fallbackTime) {
+                try {
+                    let s = null;
+                    if (startOrDateObj instanceof Date) s = startOrDateObj;
+                    else if (typeof startOrDateObj === 'string') s = new Date(startOrDateObj);
+                    if (!s || isNaN(s.getTime())) return fallbackTime || '';
+                    const e = endIsoOrUnused ? new Date(endIsoOrUnused) : null;
+                    const optionsDate = { year: 'numeric', month: 'short', day: 'numeric' };
+                    const optionsTime = { hour: 'numeric', minute: '2-digit' };
+                    const dateStr = s.toLocaleDateString(undefined, optionsDate);
+                    const timeStr = fallbackTime || (e && !isNaN(e.getTime()) ? `${s.toLocaleTimeString(undefined, optionsTime)} - ${e.toLocaleTimeString(undefined, optionsTime)}` : s.toLocaleTimeString(undefined, optionsTime));
+                    return `${dateStr} · ${timeStr}`;
+                } catch (e) {
+                    return fallbackTime || '';
+                }
+            }
+        }
+
+        // When the dashboard signals data-ready, render the stored session (keeps spinner until sync)
+        document.addEventListener('dashboard-data-ready', function onDashboardReady() {
+            try { if (window.__fetchedSession) processSession(window.__fetchedSession); }
+            catch(e) {}
+            document.removeEventListener('dashboard-data-ready', onDashboardReady);
+        });
+
+        // Try Firestore REST first, then fallback to local files
+        fetchFirestoreCurrent()
+            .then(session => {
+                if (session && session.title) {
+                    // store session and mark session fetch complete; render happens on dashboard-data-ready
+                    window.__fetchedSession = session;
+                    try { if (window.__resolveSessionReady) { window.__resolveSessionReady(); window.__resolveSessionReady = null; } } catch(e){}
+                } else {
+                    return tryNext(pathsToTry.slice()).then(res => { window.__fetchedSession = res; try { if (window.__resolveSessionReady) { window.__resolveSessionReady(); window.__resolveSessionReady = null; } } catch(e){} });
+                }
+            })
+            .catch((err) => {
+                // if firestore attempt fails, try local json
+                tryNext(pathsToTry.slice()).then(res => { window.__fetchedSession = res; try { if (window.__resolveSessionReady) { window.__resolveSessionReady(); window.__resolveSessionReady = null; } } catch(e){} }).catch(e => { console.warn('live-session.json not loaded:', e); if (sessionsList) sessionsList.innerHTML = ''; try { if (window.__resolveSessionReady) { window.__resolveSessionReady(); window.__resolveSessionReady = null; } } catch(e){} });
+            });
+    });
+    </script>
 </body>
 </html>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>

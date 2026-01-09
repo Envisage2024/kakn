@@ -149,6 +149,9 @@ document.addEventListener('DOMContentLoaded', function() {
             appendMessageDOM({ sender: 'student', text: messageText, timestamp: message.timestamp });
         }
 
+        // Log support message activity
+        try { if (window.logActivity) window.logActivity('support_message_sent', messageText, {}); } catch(e) {}
+
         messageInput.value = '';
     }
 

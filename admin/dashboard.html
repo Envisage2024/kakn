@@ -322,13 +322,26 @@
                 flex: 1 1 auto;
                 display: flex;
                 flex-direction: column;
-                overflow: hidden;
+                overflow: visible; /* allow reply form to be visible and not clipped */
                 padding: 0 12px 12px 12px;
                 box-sizing: border-box;
             }
             .admin-section.active#section-messages #messageThreadHeader { flex: 0 0 auto }
             .admin-section.active#section-messages #messageThreadContent { flex: 1 1 auto; overflow: auto; padding:12px; box-sizing:border-box }
-            .admin-section.active#section-messages #messageReplyForm { flex: 0 0 auto; padding-top:8px }
+            .admin-section.active#section-messages #messageReplyForm { display:flex; flex: 0 0 auto; padding-top:8px }
+            /* Fallback: pin reply form to bottom so it's always visible even if layout changes */
+            .admin-section.active#section-messages .message-thread { position: relative }
+            .admin-section.active#section-messages #messageReplyForm {
+                position: sticky;
+                bottom: 12px;
+                background: #ffffff;
+                padding: 12px;
+                box-shadow: 0 -6px 20px rgba(2,8,23,0.06);
+                border-radius: 8px;
+                z-index: 6;
+                gap: 10px;
+            }
+            .admin-section.active#section-messages #messageThreadContent { padding-bottom: 120px }
             @media (max-width:900px) {
                 .admin-section.active#section-messages .messages-container { flex-direction: column; height: calc(100vh - 120px); max-height: calc(100vh - 120px); }
                 .admin-section.active#section-messages .messages-list { width: 100%; flex: 0 0 auto; max-height: 220px }
@@ -758,6 +771,64 @@
             }
         })();
     </script>
+
+    <script>
+        // Notes search: filter notes by title as user types
+        (function(){
+            function getCardTitle(card){
+                if (!card) return '';
+                if (card.dataset && card.dataset.title) return card.dataset.title.trim();
+                const h = card.querySelector('h3, h4, h5, .note-title, .title');
+                if (h && h.textContent) return h.textContent.trim();
+                // fallback: first line of textContent
+                return (card.textContent||'').trim().split('\n')[0].trim();
+            }
+
+            function applyFilter(q){
+                const list = document.getElementById('notesList');
+                if (!list) return;
+                const items = Array.from(list.children).filter(c => c.nodeType===1 && !c.classList.contains('no-data'));
+                let any = false;
+                const needle = q.trim().toLowerCase();
+                if (!needle){
+                    items.forEach(i => { i.style.display = ''; });
+                } else {
+                    items.forEach(i => {
+                        const title = getCardTitle(i).toLowerCase();
+                        const visible = title.indexOf(needle) !== -1;
+                        i.style.display = visible ? '' : 'none';
+                        if (visible) any = true;
+                    });
+                }
+
+                // show appropriate no-data message
+                const noData = list.querySelector('.no-data');
+                if (noData) {
+                    if (!items.length) {
+                        noData.textContent = 'No notes uploaded yet. Click "Upload New Note" to add one.';
+                        noData.style.display = '';
+                    } else if (!needle) {
+                        noData.style.display = 'none';
+                    } else {
+                        noData.textContent = any ? '' : 'No notes match your search';
+                        noData.style.display = any ? 'none' : '';
+                    }
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function(){
+                const input = document.getElementById('noteSearchInput');
+                if (!input) return;
+                let t = null;
+                input.addEventListener('input', function(e){
+                    clearTimeout(t);
+                    t = setTimeout(() => applyFilter(input.value || ''), 160);
+                });
+                // run once to set initial state
+                applyFilter('');
+            });
+        })();
+    </script>
     
 
     <div class="admin-layout">
@@ -780,64 +851,7 @@
             
             <nav class="sidebar-nav">
                 <a href="#dashboard" class="sidebar-link active" data-section="dashboard">
-                    <script>
-                        // Notes search: filter notes by title as user types
-                        (function(){
-                            function getCardTitle(card){
-                                if (!card) return '';
-                                if (card.dataset && card.dataset.title) return card.dataset.title.trim();
-                                const h = card.querySelector('h3, h4, h5, .note-title, .title');
-                                if (h && h.textContent) return h.textContent.trim();
-                                // fallback: first line of textContent
-                                return (card.textContent||'').trim().split('\n')[0].trim();
-                            }
-
-                            function applyFilter(q){
-                                const list = document.getElementById('notesList');
-                                if (!list) return;
-                                const items = Array.from(list.children).filter(c => c.nodeType===1 && !c.classList.contains('no-data'));
-                                let any = false;
-                                const needle = q.trim().toLowerCase();
-                                if (!needle){
-                                    items.forEach(i => { i.style.display = ''; });
-                                } else {
-                                    items.forEach(i => {
-                                        const title = getCardTitle(i).toLowerCase();
-                                        const visible = title.indexOf(needle) !== -1;
-                                        i.style.display = visible ? '' : 'none';
-                                        if (visible) any = true;
-                                    });
-                                }
-
-                                // show appropriate no-data message
-                                const noData = list.querySelector('.no-data');
-                                if (noData) {
-                                    if (!items.length) {
-                                        noData.textContent = 'No notes uploaded yet. Click "Upload New Note" to add one.';
-                                        noData.style.display = '';
-                                    } else if (!needle) {
-                                        noData.style.display = 'none';
-                                    } else {
-                                        noData.textContent = any ? '' : 'No notes match your search';
-                                        noData.style.display = any ? 'none' : '';
-                                    }
-                                }
-                            }
-
-                            document.addEventListener('DOMContentLoaded', function(){
-                                const input = document.getElementById('noteSearchInput');
-                                if (!input) return;
-                                let t = null;
-                                input.addEventListener('input', function(e){
-                                    clearTimeout(t);
-                                    t = setTimeout(() => applyFilter(input.value || ''), 160);
-                                });
-                                // run once to set initial state
-                                applyFilter('');
-                            });
-                        })();
-                        </script>
-
+                    <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
                 <a href="#assignments" class="sidebar-link" data-section="assignments">
@@ -1225,7 +1239,7 @@
                         </div>
                         <div id="messageThreadContent" class="message-content">
                         </div>
-                        <div id="messageReplyForm" class="message-reply" style="display: none;">
+                        <div id="messageReplyForm" class="message-reply">
                             <textarea id="replyMessage" placeholder="Type your reply..."></textarea>
                             <button class="btn btn-primary" id="sendReplyBtn">
                                 <i class="fas fa-paper-plane"></i> Send

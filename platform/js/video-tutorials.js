@@ -204,6 +204,12 @@ document.addEventListener('DOMContentLoaded', function() {
             card.addEventListener('click', function() {
                 const videoUrl = this.getAttribute('data-url');
                 if (!videoUrl || videoUrl === '#') return alert('No URL available for this tutorial.');
+                // Log watch activity
+                try {
+                    const titleEl = this.querySelector('h4');
+                    const t = titleEl ? titleEl.textContent.trim() : null;
+                    if (window.logActivity) window.logActivity('video_watched', t || 'Video Tutorial', { url: videoUrl });
+                } catch (e) {}
                 window.open(videoUrl, '_blank');
             });
         });

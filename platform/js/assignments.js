@@ -243,6 +243,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 } catch (e) { /* ignore */ }
 
+                // Log activity: assignment submitted
+                try {
+                    const titleEl = card.querySelector('h3');
+                    const assignmentTitle = titleEl ? titleEl.textContent.trim() : '';
+                    if (window.logActivity) window.logActivity('assignment_submitted', assignmentTitle || 'Assignment Submitted', { assignmentId: aid });
+                } catch (e) {}
+
                 // refresh tabs
                 activateTab(tabs.find(t=>t.classList.contains('active')).dataset.filter);
             } catch (err) { console.error('Error saving completion', err); alert('Failed to mark completed.'); }
