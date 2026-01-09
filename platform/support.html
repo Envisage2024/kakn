@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One-on-One Support - KAKN Sites Learning Platform</title>
+    <link rel="icon" type="image/x-icon" href="../images/logo.png">
+        <script>
+            try{
+                // preserve persisted collapsed state
+                if (localStorage.getItem('sidebarCollapsed') === 'true') document.documentElement.classList.add('sidebar-collapsed');
+                // hide potentially flashing elements until CSS/JS fully loads
+                document.documentElement.classList.add('preload-hide');
+            }catch(e){}
+        </script>
+    <style>
+    /* Keep sidebar off-screen on small devices before main CSS loads, allow slide-in animation */
+    @media (max-width: 768px) {
+        .sidebar { transform: translateX(-100%); transition: transform 240ms ease-in-out; }
+        .sidebar.mobile-open { transform: translateX(0); }
+        /* While page is loading, hide sidebar toggle and logo text to avoid visual flash */
+        .preload-hide .logo-text, .preload-hide .toggle-btn { opacity: 0 !important; visibility: hidden !important; }
+        .preload-hide .sidebar { transform: translateX(-100%) !important; }
+    }
+    </style>
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+    // Reveal inline-hidden header items (logo text and toggle) instantly once resources are ready
+    function revealHeaderItems() {
+        try {
+            document.querySelectorAll('.logo-text, .toggle-btn').forEach(el => {
+                el.style.transition = 'none';
+                el.style.visibility = 'visible';
+                el.style.opacity = '1';
+            });
+            // allow layout and then remove the forced 'none' transition so future transitions work
+            setTimeout(() => {
+                document.querySelectorAll('.logo-text, .toggle-btn').forEach(el => {
+                    el.style.transition = '';
+                });
+                // also remove the global preload-hide marker
+                try { document.documentElement.classList.remove('preload-hide'); } catch (e) {}
+            }, 60);
+        } catch (e) {}
+    }
+    window.addEventListener('load', revealHeaderItems);
+    // fallback in case load already fired
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(revealHeaderItems, 40); });
+    </script>
+    <script>
+    // Insert sidebar template content early so it doesn't flash during initial paint
+    (function insertSidebarFromTemplate(){
+        function insert(){
+            try {
+                const tpl = document.getElementById('sidebarTemplate');
+                const placeholder = document.getElementById('sidebar');
+                if (tpl && placeholder && placeholder.innerHTML.trim() === '') {
+                    // clone template
+                    const clone = tpl.content.cloneNode(true);
+                    // replace placeholder
+                    placeholder.replaceWith(clone);
+                    // sidebar inserted from template
+                    // ensure sidebar event handlers initialize (main.js may have run earlier)
+                    setTimeout(() => { try { if (window.initializeSidebar) initializeSidebar(); } catch (e) {} }, 30);
+                    // Fallback: ensure mobile toggle opens sidebar even if main.js didn't attach listeners
+                    setTimeout(() => {
+                        try {
+                            const mobileToggle = document.getElementById('mobileToggle');
+                            const sidebarEl = document.getElementById('sidebar');
+                            if (mobileToggle && sidebarEl && !mobileToggle.dataset.fallbackInit) {
+                                mobileToggle.addEventListener('click', function() {
+                                    const isOpen = sidebarEl.classList.toggle('mobile-open');
+                                    if (isOpen) {
+                                        let ov = document.getElementById('mobileOverlay');
+                                        if (!ov) {
+                                            ov = document.createElement('div');
+                                            ov.id = 'mobileOverlay';
+                                            ov.className = 'mobile-overlay';
+                                            ov.addEventListener('click', function() {
+                                                sidebarEl.classList.remove('mobile-open');
+                                                if (ov && ov.parentNode) ov.parentNode.removeChild(ov);
+                                            });
+                                            document.body.appendChild(ov);
+                                        }
+                                        document.body.classList.add('no-scroll');
+                                    } else {
+                                        const ov = document.getElementById('mobileOverlay'); if (ov && ov.parentNode) ov.parentNode.removeChild(ov);
+                                        document.body.classList.remove('no-scroll');
+                                    }
+                                });
+                                mobileToggle.dataset.fallbackInit = '1';
+                            }
+                        } catch (e) {}
+                    }, 60);
+                }
+            } catch (e) { console.warn('insertSidebarFromTemplate error', e); }
+        }
+        if (document.readyState === 'complete') insert();
+        else window.addEventListener('load', insert);
+    })();
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="support-page">
+    <style>
+    /* Page-specific: make the chat module the only scrollable area and prevent horizontal overflow */
+    html, body { max-width: 100%; overflow-x: hidden; margin: 0; padding: 0; }
+    /* Lock page height and prevent page scrolling; allow internal chat to scroll */
+    body.support-page, body.support-page html { height: 100svh; height: 100dvh; overflow: hidden; }
+    body.support-page .app-container { min-height: 100svh; min-height: 100dvh; height: 100%; overflow: hidden; }
+    body.support-page .main-content { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+    body.support-page .content-area { padding: 16px; flex: 1 1 auto; overflow: hidden; display: flex; align-items: stretch; }
+    body.support-page .chat-container { width: 100%; max-width: 900px; margin: 0 auto; border-radius: 12px; flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+
+    /* Prefer newer device-height units to avoid mobile address-bar gaps */
+    @supports (height: 100svh) {
+        body.support-page .chat-container { height: calc(100svh - var(--header-height) - 40px); }
+    }
+    body.support-page .chat-container { height: calc(100dvh - var(--header-height) - 40px); }
+
+    /* Allow the messages area to be the only scrollable region */
+    body.support-page .chat-messages { overflow-y: auto; -webkit-overflow-scrolling: touch; min-height: 0; }
+    body.support-page .chat-input { flex: 0 0 auto; }
+
+    /* Ensure collapsed/expanded sidebar states affect layout on this page */
+    body.support-page .sidebar { transition: transform 0.25s ease, width 0.3s ease; z-index: 95; }
+    html.sidebar-collapsed .sidebar, body.support-page .sidebar.collapsed { width: var(--sidebar-collapsed-width); }
+    html.sidebar-collapsed .main-content, body.support-page .sidebar.collapsed ~ .main-content { margin-left: var(--sidebar-collapsed-width); }
+    body.support-page .main-content { margin-left: var(--sidebar-width); }
+
+    /* Ensure mobile overlay and sidebar stack above the chat so links are clickable */
+    body.support-page .mobile-overlay { z-index: 1590; position: fixed; inset: 0; pointer-events: auto; }
+    body.support-page .sidebar { z-index: 1600; }
+    body.support-page .sidebar.mobile-open { transform: translateX(0); z-index: 1610; }
+    body.support-page .main-content { z-index: 0; position: relative; }
+
+    @media (max-width: 768px) {
+        /* Mobile: keep sidebar hidden until mobile-open is added by JS */
+        body.support-page .sidebar { transform: translateX(-100%); }
+        body.support-page .sidebar.mobile-open { transform: translateX(0); }
+        body.support-page .main-content { margin-left: 0; }
+        body.support-page .chat-container { border-radius: 8px; box-shadow: none; height: calc(100svh - var(--header-height) - 20px); }
+        body.support-page .content-area { padding: 12px; }
+    }
+    /* Empty state centered inside chat-messages */
+    body.support-page .chat-empty { display:flex; align-items:center; justify-content:center; height:100%; color:var(--text-light); font-size:16px; text-align:center; padding:12px; }
+    body.support-page .chat-empty p { margin:0; }
+    /* Hide the sidebar logo text on this page to prevent flash; keep it revealable by JS */
+    .preload-hide .sidebar .logo-text { opacity: 0 !important; visibility: hidden !important; }
+    </style>
+    <style>
+    /* Spinner specific to chat loader */
+    #chatLoader .spinner {
+        width: 48px;
+        height: 48px;
+        margin: 0;
+        border-radius: 50%;
+        border: 4px solid rgba(0,0,0,0.08);
+        border-top-color: var(--primary-blue);
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    </style>
+    <div class="app-container">
+        <template id="sidebarTemplate">
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <div class="logo">
+                        <img src="../images/logo.png" alt="KAKN Sites logo" class="site-logo">
+                        <span class="logo-text">KAKN Sites</span>
+                    </div>
+                    <button class="toggle-btn" id="toggleSidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                <nav class="sidebar-nav">
+                    <a href="dashboard.html" class="nav-item">
+                        <i class="fas fa-home"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="assignments.html" class="nav-item">
+                        <i class="fas fa-tasks"></i>
+                        <span class="nav-text">Assignments</span>
+                    </a>
+                    <a href="live-sessions.html" class="nav-item">
+                        <i class="fas fa-video"></i>
+                        <span class="nav-text">Live Sessions</span>
+                    </a>
+                    <a href="tutorials.html" class="nav-item">
+                        <i class="fas fa-play-circle"></i>
+                        <span class="nav-text">Video Tutorials</span>
+                    </a>
+                    <a href="notes.html" class="nav-item">
+                        <i class="fas fa-file-pdf"></i>
+                        <span class="nav-text">Notes</span>
+                    </a>
+                    <a href="support.html" class="nav-item active" id="oneOnOneNav">
+                        <i class="fas fa-comment-dots"></i>
+                        <span class="nav-text">One-on-One Support</span>
+                        <span class="badge" id="supportBadge" style="display:none"></span>
+                    </a>
+                    <a href="forum.html" class="nav-item">
+                        <i class="fas fa-users"></i>
+                        <span class="nav-text">Group Forum</span>
+                    </a>
+                    <a href="certificate.html" class="nav-item">
+                        <i class="fas fa-certificate"></i>
+                        <span class="nav-text">Certificate</span>
+                    </a>
+                    <a href="#" class="nav-item logout" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="nav-text">Logout</span>
+                    </a>
+                </nav>
+            </aside>
+        </template>
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="mobile-toggle" id="mobileToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2>One-on-One Support</h2>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <span class="user-name" id="userName">Welcome, User</span>
+                        <div class="user-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <div class="tutor-info">
+                            <div class="tutor-avatar">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div>
+                                <h3>Andrew Kizito</h3>
+                                <span class="online-status"><i class="fas fa-circle"></i> Online</span>
+                            </div>
+                        </div>
+                    </div>
+
+                        <div class="chat-messages" id="chatMessages">
+                            <!-- messages will be populated by realtime script; start empty so only user's messages appear -->
+                        </div>
+
+                    <div class="chat-input">
+                        <input type="text" id="messageInput" placeholder="Type your message...">
+                        <button class="send-btn" id="sendMessageBtn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyB5kckado_jqgb1z_oRrLrP90bLvBUZGQs",
+          authDomain: "kakn-sites-7c4e9.firebaseapp.com",
+          databaseURL: "https://kakn-sites-7c4e9-default-rtdb.firebaseio.com",
+          projectId: "kakn-sites-7c4e9",
+          storageBucket: "kakn-sites-7c4e9.firebasestorage.app",
+          messagingSenderId: "628096383132",
+          appId: "1:628096383132:web:26ceb9e11094fe87191559",
+          measurementId: "G-VX7S6Y1YN6"
+        };
+        if (!window.firebase || !firebase.apps || firebase.apps.length === 0) {
+            firebase.initializeApp(firebaseConfig);
+        }
+    </script>
+    <script>
+    // Reveal the sidebar (was hidden inline to prevent initial flash)
+    (function showSidebarEarly(){
+        function reveal(){
+            try{ const sb = document.getElementById('sidebar'); if(sb) sb.style.display = ''; }catch(e){}
+        }
+        if (document.readyState === 'complete' || document.readyState === 'interactive') reveal();
+        else document.addEventListener('DOMContentLoaded', reveal);
+        // also ensure reveal after full load
+        window.addEventListener('load', reveal);
+    })();
+    </script>
+    <script src="js/main.js"></script>
+    <script src="js/support.js"></script>
+</body>
+</html>

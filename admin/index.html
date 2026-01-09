@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - KAKN Sites</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="../images/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root{--card-bg:rgba(255,255,255,0.06);--glass:rgba(255,255,255,0.08)}
+        html,body{height:100%;margin:0;overflow:hidden}
+        body{font-family:'Poppins',sans-serif;color:#fff;background-color:#0a2440;background-image: url('../attached_assets/stock_images/digital_learning_edu_ae60e2a0.jpg');background-size:cover;background-position:center;background-attachment:fixed;display:block}
+
+        /* Dark overlay to dim the picture and keep focus on the modal */
+        body::before{content:"";position:fixed;inset:0;background:linear-gradient(rgba(4,10,20,0.62), rgba(4,10,20,0.62));pointer-events:none;z-index:0}
+
+        /* Fixed, centered modal - solid white card for clear readability */
+        .auth-card{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(420px,92vw);background:#ffffff;border-radius:12px;padding:22px;box-shadow:0 24px 60px rgba(2,6,23,0.45);box-sizing:border-box;border:1px solid rgba(15,23,42,0.06);z-index:10;color:#0b2540}
+
+        .auth-brand{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+        .auth-brand .logo{width:56px;height:56px;border-radius:10px;background:#f6f9ff;padding:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(11,37,64,0.06)}
+        .auth-brand h3{margin:0;font-size:18px;color:#0b2540}
+
+        .auth-title{font-size:16px;margin:6px 0 12px 0;color:#334155}
+        .form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+        label{font-size:13px;color:#475569}
+        input[type=text],input[type=password]{padding:12px 14px;border-radius:8px;border:1px solid #e6eef9;background:#f8fafc;color:#0b2540;outline:none;width:100%;box-sizing:border-box;height:44px}
+        /* Password field wrapper for toggle button */
+        .password-field{position:relative}
+        /* wrapper positioned relative to input so toggle sits inside the field */
+        .input-surface{position:relative}
+        .input-surface input{display:block}
+        .input-surface .toggle-pass{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:#64748b;cursor:pointer;padding:0;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:12;width:32px;height:32px;border-radius:50%;box-shadow:none}
+        .input-surface .toggle-pass:focus{outline:none;box-shadow:0 0 0 4px rgba(13,110,253,0.12);}
+        .input-surface .toggle-pass:hover{color:#0b2540}
+        /* make room for the toggle inside the input */
+        .input-surface input[type=password]{padding-right:48px;height:44px}
+        input[type=text]::placeholder,input[type=password]::placeholder{color:#94a3b8}
+        .form-actions{display:flex;gap:10px;width:100%;margin-top:6px}
+        .btn{padding:10px 12px;border-radius:8px;border:none;cursor:pointer}
+        .btn-primary{background:linear-gradient(90deg,#0d6efd,#0a58ca);color:#fff;width:100%}
+        /* secondary button removed */
+        .helper{font-size:13px;color:rgba(11,37,64,0.6);margin-top:8px;text-align:center}
+        .auth-footer{margin-top:12px;font-size:13px;color:#64748b;text-align:center}
+
+        /* Small screens: keep modal tight */
+        @media(max-width:420px){
+            .auth-card{width:92vw;padding:16px;border-radius:10px}
+            .auth-brand .logo{width:48px;height:48px}
+            .auth-title{font-size:16px}
+        }
+    </style>
+
+    <style>
+        /* Inline button spinner for admin login */
+        .btn-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.45);
+            border-top-color: #ffffff;
+            vertical-align: middle;
+            margin-right: 8px;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .btn[disabled], .btn.disabled { opacity: 0.85; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    
+    <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+        <div class="auth-brand">
+            <div class="logo"><img src="../images/logo.png" alt="KAKN" style="width:100%;height:100%;object-fit:contain"></div>
+            <div>
+                <h3>KAKN Sites</h3>
+                <div class="auth-title" id="authTitle">Admin Authentication</div>
+            </div>
+        </div>
+
+        <form id="adminLoginForm" class="auth-form" novalidate>
+            <div class="form-group">
+                <label for="adminUsername"><i class="fas fa-user"></i> Username</label>
+                <input type="text" id="adminUsername" required placeholder="Enter admin username">
+            </div>
+
+            <div class="form-group">
+                <label for="adminPassword"><i class="fas fa-lock"></i> Password</label>
+                <div class="input-surface">
+                    <input type="password" id="adminPassword" required placeholder="Enter password">
+                    <button type="button" id="togglePassword" class="toggle-pass" aria-pressed="false" aria-label="Show password"><i class="fas fa-eye"></i></button>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="signInBtn">Login</button>
+            </div>
+        </form>
+        <div id="loginStatus" style="font-size:13px;color:#b91c1c;text-align:center;margin-top:8px;display:none"></div>
+        <div class="helper">Don't share your admin credentials.</div>
+        <div class="auth-footer"><a href="../index.html"><i class="fas fa-home"></i> Back to Home</a></div>
+    </div>
+
+    <!-- Firebase SDK (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Firebase config for project
+        const firebaseConfig = {
+          apiKey: "AIzaSyB5kckado_jqgb1z_oRrLrP90bLvBUZGQs",
+          authDomain: "kakn-sites-7c4e9.firebaseapp.com",
+          databaseURL: "https://kakn-sites-7c4e9-default-rtdb.firebaseio.com",
+          projectId: "kakn-sites-7c4e9",
+          storageBucket: "kakn-sites-7c4e9.firebasestorage.app",
+          messagingSenderId: "628096383132",
+          appId: "1:628096383132:web:26ceb9e11094fe87191559",
+          measurementId: "G-VX7S6Y1YN6"
+        };
+        if (!window.firebase || !firebase.apps || firebase.apps.length === 0) {
+            firebase.initializeApp(firebaseConfig);
+        }
+    </script>
+
+    <!-- Shared auth utilities -->
+    <script src="../js/auth.js"></script>
+
+    <script>
+        (function(){
+            // Use shared `hashString` from ../js/auth.js (includes Web Crypto and pure-JS fallback)
+
+            const statusEl = document.getElementById('loginStatus');
+
+            // Save button removed — credentials must be created separately (migration or admin tooling).
+
+            // Login using shared loginAdmin
+            const adminLoginForm = document.getElementById('adminLoginForm');
+            if (adminLoginForm) {
+                // helper to set button loading state and show inline spinner
+                function setButtonLoading(btn) {
+                    if (!btn) return function() {};
+                    if (btn.disabled) return function() {};
+                    btn.disabled = true;
+                    btn.classList.add('disabled');
+                    const spinner = document.createElement('span');
+                    spinner.className = 'btn-spinner';
+                    spinner.setAttribute('aria-hidden', 'true');
+                    btn.insertBefore(spinner, btn.firstChild);
+                    return function restore() {
+                        btn.disabled = false;
+                        btn.classList.remove('disabled');
+                        if (spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner);
+                    };
+                }
+
+                const signInBtn = document.getElementById('signInBtn');
+                // Do not show spinner on password Enter keydown; spinner appears when submit handler runs
+
+                adminLoginForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const usernameRaw = document.getElementById('adminUsername').value.trim();
+                    const password = document.getElementById('adminPassword').value;
+                    if (!usernameRaw || !password) { alert('Enter username and password'); return; }
+                    const restore = setButtonLoading(signInBtn);
+                    try {
+                        const result = await loginAdmin(usernameRaw, password);
+                        if (result && result.success) {
+                            window.location.href = 'dashboard.html';
+                        } else {
+                            if (statusEl) { statusEl.style.display = 'block'; statusEl.style.color='#b91c1c'; statusEl.textContent = result && result.message ? result.message : 'Invalid credentials'; }
+                        }
+                    } catch (err) { console.error('Login error:', err); alert('Login error. See console.'); }
+                    finally { try { restore(); } catch (err) {} }
+                });
+            }
+
+            // Password visibility toggle
+            const toggle = document.getElementById('togglePassword');
+            if (toggle) {
+                toggle.addEventListener('click', () => {
+                    const pwd = document.getElementById('adminPassword');
+                    if (!pwd) return;
+                    const isPassword = pwd.type === 'password';
+                    pwd.type = isPassword ? 'text' : 'password';
+                    toggle.setAttribute('aria-pressed', String(!isPassword));
+                    toggle.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

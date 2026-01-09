@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Sessions - KAKN Sites Learning Platform</title>
+    <link rel="icon" type="image/x-icon" href="../images/logo.png">
+    <link rel="stylesheet" href="css/style.css">
+        <script>try{ if (localStorage.getItem('sidebarCollapsed') === 'true') document.documentElement.classList.add('sidebar-collapsed'); }catch(e){}</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <img src="../images/logo.png" alt="KAKN Sites logo" class="site-logo">
+                    <span class="logo-text">KAKN Sites</span>
+                </div>
+                <button class="toggle-btn" id="toggleSidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="assignments.html" class="nav-item">
+                    <i class="fas fa-tasks"></i>
+                    <span class="nav-text">Assignments</span>
+                </a>
+                <a href="live-sessions.html" class="nav-item active">
+                    <i class="fas fa-video"></i>
+                    <span class="nav-text">Live Sessions</span>
+                </a>
+                <a href="tutorials.html" class="nav-item">
+                    <i class="fas fa-play-circle"></i>
+                    <span class="nav-text">Video Tutorials</span>
+                </a>
+                <a href="notes.html" class="nav-item">
+                    <i class="fas fa-file-pdf"></i>
+                    <span class="nav-text">Notes</span>
+                </a>
+                <a href="support.html" class="nav-item">
+                    <i class="fas fa-comment-dots"></i>
+                    <span class="nav-text">One-on-One Support</span>
+                </a>
+                <a href="forum.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span class="nav-text">Group Forum</span>
+                </a>
+                <a href="certificate.html" class="nav-item">
+                    <i class="fas fa-certificate"></i>
+                    <span class="nav-text">Certificate</span>
+                </a>
+                <a href="#" class="nav-item logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="mobile-toggle" id="mobileToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2>Live Sessions</h2>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <span class="user-name" id="userName">Welcome, User</span>
+                        <div class="user-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="live-session-container">
+                    <div class="session-status-card" style="position:relative;">
+                        <div id="sessionSpinner" class="loader" aria-hidden="false" style="display:block;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20;">
+                            <div class="spinner" aria-hidden="true"></div>
+                        </div>
+
+                        <div class="status-indicator">
+                            <div class="status-light" id="statusLight"></div>
+                            <span class="status-text" id="statusText"></span>
+                        </div>
+
+                        <div id="pendingLabel" class="pending-label" style="display:none;">Upcoming Session</div>
+
+                        <div class="session-details" id="sessionDetails" style="display:none;">
+                            <!-- Session details will be initialized from Firebase and injected here -->
+                        </div>
+
+                        <button class="btn-primary btn-large" id="joinSessionBtn" style="display:none;">
+                            <i class="fas fa-video"></i> Click Here to Join
+                        </button>
+                        <button class="btn-outline" id="refreshSessionBtn" style="display:none;margin-left:8px;">Refresh</button>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/live-sessions.js"></script>
+
+    <!-- Session Join Modal (Google Meet opens in new tab) -->
+    <div id="sessionJoinModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:2200;">
+        <div style="position:relative;width:95%;max-width:1100px;height:80vh;background:#000;border-radius:8px;overflow:hidden;">
+            <button id="closeJoinModal" style="position:absolute;right:12px;top:12px;z-index:30;border:none;background:rgba(255,255,255,0.1);color:#fff;padding:8px;border-radius:6px;cursor:pointer;">Close ✕</button>
+            <div id="jaas-container" style="width:100%;height:100%;"></div>
+        </div>
+    </div>
+</body>
+</html>
